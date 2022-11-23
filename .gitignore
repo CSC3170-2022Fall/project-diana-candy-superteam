@@ -263,3 +263,5 @@ docs/dev
 
 # Clangd cache index
 .cache
+
+.history
