@@ -7,8 +7,8 @@ This is our implementation for the course project of CSC3170, 2022 Fall, CUHK(SZ
 
 <!-- Please fill in "x" to replace the blank space between "[]" to tick the todo item; it's ticked on the first one by default. -->
 
-- [x] **Application with Database System(s)**
-- [ ] **Implementation of a Database System**
+- [ ] **Application with Database System(s)**
+- [x] **Implementation of a Database System**
 
 ## Team Members
 
@@ -19,7 +19,7 @@ Our team consists of the following members, listed in the table below (the team 
 | Student ID | Student Name | GitHub Account (in Email) |
 | ---------- | ------------ | ------------------------- |
 | 123010245  | 张三 🚩      | sanzhang@gmail.com        |
-| 123010345  | 李四         | sili@outlook.com          |
+| 121090003  | 包景致       | zqlwmatt@gmail.com        |
 | 123030245  | 王五         | wuwang@foxmail.com        |
 | 123020245  | 陈六         | liuchen@qq.com            |
 | 123010249  | 朱九         | jiuzhu@163.com            |
@@ -39,3 +39,7 @@ As for Option 2, our topic background specification can be found in [background-
 ## Project Abstract
 
 <!-- TODO -->
+
+## Timeline
+
+![](https://upload.zmatt.cn/teasers/timeline.png)
