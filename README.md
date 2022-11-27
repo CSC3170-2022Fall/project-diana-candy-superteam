@@ -21,9 +21,9 @@ Our team consists of the following members, listed in the table below (the team 
 | 123010245  | 张三 🚩       | sanzhang@gmail.com        |
 | 121090003  | 包景致        | zqlwmatt@gmail.com        |
 | 120040061  | 汪宁远        | 120040061@link.cuhk.edu.cn |
-| 123020245  | 陈六         | liuchen@qq.com            |
+| 120090108  | 周炜        | 120090108@link.cuhk.edu.cn   |
 | 123010249  | 朱九         | jiuzhu@163.com            |
-| 120090784  | 尹启骅        | 120090784@link.cuhk.edu.cn|
+| 120090784  | 尹启骅        | 120090784@
 | 119010306  | 王睿奕        | 119010306@link.cuhk.edu.cn|
 ## Project Specification
 
