@@ -18,7 +18,7 @@ Our team consists of the following members, listed in the table below (the team 
 
 | Student ID | Student Name | GitHub Account (in Email) |
 | ---------- | ------------ | ------------------------- |
-| 123010245  | 王嘉茗 🚩     | 120020401@link.cuhk.edu.cn|
+| 119020401  | 王嘉茗 🚩     | 119020401@link.cuhk.edu.cn|
 | 121090003  | 包景致        | zqlwmatt@gmail.com        |
 | 120040061  | 汪宁远        | 120040061@link.cuhk.edu.cn|
 | 120090108  | 周炜          | 120090108@link.cuhk.edu.cn|
