@@ -31,6 +31,10 @@ class TransactionManager;
 
 /**
  * LockManager handles transactions asking for locks on records.
+ * Class Hierarchy:
+ *   LockManager
+ *   - LockRequest(txn_id, LockMode, granted): ask for a lock on a record
+ *   - LockRequestQueue(list<LockRequest>, condition, upgrade): a queue of lock requests
  */
 class LockManager {
   enum class LockMode { SHARED, EXCLUSIVE };
@@ -109,6 +113,7 @@ class LockManager {
 
   /** Lock table for lock requests. */
   std::unordered_map<RID, LockRequestQueue> lock_table_;
+  auto WaitForLock(Transaction *txn, LockRequestQueue *lock_queue) -> bool;
 };
 
 }  // namespace bustub

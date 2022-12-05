@@ -79,13 +79,13 @@ class TableWriteRecord {
  */
 class IndexWriteRecord {
  public:
-  IndexWriteRecord(RID rid, table_oid_t table_oid, WType wtype, const Tuple &tuple, const Tuple &old_tuple,
+  IndexWriteRecord(RID rid, table_oid_t table_oid, WType wtype, const Tuple &tuple, //const Tuple &old_tuple,
                    index_oid_t index_oid, Catalog *catalog)
       : rid_(rid),
         table_oid_(table_oid),
         wtype_(wtype),
         tuple_(tuple),
-        old_tuple_(old_tuple),
+        //old_tuple_(old_tuple),
         index_oid_(index_oid),
         catalog_(catalog) {}
 
@@ -175,11 +175,15 @@ class Transaction {
   /** @return the id of the thread running the transaction */
   inline auto GetThreadId() const -> std::thread::id { return thread_id_; }
 
+  // ! Lock Manager Functions ! //
+
   /** @return the id of this transaction */
   inline auto GetTransactionId() const -> txn_id_t { return txn_id_; }
 
   /** @return the isolation level of this transaction */
   inline auto GetIsolationLevel() const -> IsolationLevel { return isolation_level_; }
+
+  // ! Lock Manager Functions ! //
 
   /** @return the list of table write records of this transaction */
   inline auto GetWriteSet() -> std::shared_ptr<std::deque<TableWriteRecord>> { return table_write_set_; }
@@ -221,6 +225,8 @@ class Transaction {
    */
   inline void AddIntoDeletedPageSet(page_id_t page_id) { deleted_page_set_->insert(page_id); }
 
+  // ! Lock Manager Functions ! //
+
   /** @return the set of resources under a shared lock */
   inline auto GetSharedLockSet() -> std::shared_ptr<std::unordered_set<RID>> { return shared_lock_set_; }
 
@@ -243,6 +249,8 @@ class Transaction {
    * @param state new state
    */
   inline void SetState(TransactionState state) { state_ = state; }
+
+  // ! Lock Manager Functions ! //
 
   /** @return the previous LSN */
   inline auto GetPrevLSN() -> lsn_t { return prev_lsn_; }

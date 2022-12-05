@@ -137,6 +137,7 @@ class BufferPoolManagerInstance : public BufferPoolManager {
   /** Pointer to the log manager. */
   LogManager *log_manager_ __attribute__((__unused__));
   /** Page table for keeping track of buffer pool pages. */
+  // 注意：buffer pool 追踪正在使用的 page
   std::unordered_map<page_id_t, frame_id_t> page_table_;
   /** Replacer to find unpinned pages for replacement. */
   Replacer *replacer_;
