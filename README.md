@@ -39,7 +39,7 @@ After thorough discussion, our team made the choice and the specification inform
 
 ![project_description](https://user-images.githubusercontent.com/34508318/205655270-b90103a7-7664-4879-9aa8-5bd52fde1c8e.png)
 
-Our project mainly focuses on the `Command Interpreter` of database system. It will basically support the functions:
+Our project mainly focuses on the `Command Interpreter` module and database structures of database system. It will basically support these functions:
 
 - Interprete SQL language.
 - Support the basic structures of database system (e.g. database file, table, row, column).
@@ -50,15 +50,28 @@ Our project mainly focuses on the `Command Interpreter` of database system. It w
 
 ## Timeline
 
+<!--Todo-->
 
 ## \*Optional Work
 
 ### \[Option4\] CMU 15-445/645, Fall 2021: Database Systems
 
 - [x] Lab 1: Buffer Pool Manager
+    - [x] [LRU Replacement Policy](https://15445.courses.cs.cmu.edu/fall2021/project1/#replacer)
+    - [x] [Buffer Pool Manager Instance](https://15445.courses.cs.cmu.edu/fall2021/project1/#buffer-pool-instance)
+    - [x] [Parallel Buffer Pool Manager](https://15445.courses.cs.cmu.edu/fall2021/project1/#parallel-buffer-pool)
 - [ ] Lab 2: Hash Index
+
+    - [ ] [Page Layouts](https://15445.courses.cs.cmu.edu/fall2021/project2/#task1)
+    - [ ] [Extendible Hashing Implementation](https://15445.courses.cs.cmu.edu/fall2021/project2/#task2)
+    - [ ] [Concurrency Control](https://15445.courses.cs.cmu.edu/fall2021/project2/#task3)
 - [ ] Lab 3: Query Execution
-- [x] Lab 4: Concurrency Control \*(partial finished, because some tasks depend on Lab3)
+
+    - [ ] [Executors](https://15445.courses.cs.cmu.edu/fall2021/project3/)
+- [ ] Lab 4: Concurrency Control
+    - [x] [Lock Manager](https://15445.courses.cs.cmu.edu/fall2021/project4/#lock_manager)
+    - [ ] [Deadlock Prevention](https://15445.courses.cs.cmu.edu/fall2021/project4/#deadlock_prevention)
+    - [ ] [Concurrent Query Execution](https://15445.courses.cs.cmu.edu/fall2021/project4/#execution_engine) (has dependency with Lab 3)
 
 **Project codes:** https://github.com/CSC3170-2022Fall/project-diana-candy-superteam/tree/cmu15445
 
