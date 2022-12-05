@@ -75,7 +75,7 @@ Our project mainly focuses on the `Command Interpreter` module and database stru
 - [ ] Lab 4: Concurrency Control
     - [x] [Lock Manager](https://15445.courses.cs.cmu.edu/fall2021/project4/#lock_manager)
     - [ ] [Deadlock Prevention](https://15445.courses.cs.cmu.edu/fall2021/project4/#deadlock_prevention)
-    - [ ] [Concurrent Query Execution](https://15445.courses.cs.cmu.edu/fall2021/project4/#execution_engine) (has dependency with Lab 3)
+    - [ ] [Concurrent Query Execution](https://15445.courses.cs.cmu.edu/fall2021/project4/#execution_engine) (has dependency on Lab 3)
 
 **Project codes:** https://github.com/CSC3170-2022Fall/project-diana-candy-superteam/tree/cmu15445
 
