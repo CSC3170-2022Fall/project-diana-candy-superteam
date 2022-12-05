@@ -60,6 +60,8 @@ Our project mainly focuses on the `Command Interpreter` of database system. It w
 - [ ] Lab 3: Query Execution
 - [x] Lab 4: Concurrency Control \*(partial finished, because some tasks depend on Lab3)
 
+**Project codes:** https://github.com/CSC3170-2022Fall/project-diana-candy-superteam/tree/cmu15445
+
 ### Result from Autograder
 
-![result-lab1](https://user-images.githubusercontent.com/34508318/205659161-2a27b43f-cdb8-4f12-8013-18707de57271.JPG)
+[Lab 1-result](https://cdn.zmatt.cn/img/archived/github/result-cmu15445-lab1.png)
