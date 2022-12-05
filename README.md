@@ -35,10 +35,31 @@ After thorough discussion, our team made the choice and the specification inform
 - Our branch choice is: **Not applied**
 - The difficulty level is: **Not applied**
 
-As for Option 2, our topic background specification can be found in [background-specification.md](background-specification.md).
-
 ## Project Abstract
 
-<!-- TODO -->
+![project_description](https://user-images.githubusercontent.com/34508318/205655270-b90103a7-7664-4879-9aa8-5bd52fde1c8e.png)
+
+Our project mainly focuses on the `Command Interpreter` of database system. It will basically support the functions:
+
+- Interprete SQL language.
+- Support the basic structures of database system (e.g. database file, table, row, column).
+- Do fundamental queries on database system, including `select`, `from`, `where` clauses.
+
+**Project codes:** https://github.com/CSC3170-2022Fall/project-diana-candy-superteam/tree/db61b
+
 
 ## Timeline
+
+
+## \*Optional Work
+
+### \[Option4\] CMU 15-445/645, Fall 2021: Database Systems
+
+- [x] Lab 1: Buffer Pool Manager
+- [ ] Lab 2: Hash Index
+- [ ] Lab 3: Query Execution
+- [x] Lab 4: Concurrency Control \*(partial finished, because some tasks depend on Lab3)
+
+### Result from Autograder
+
+![result-lab1](https://user-images.githubusercontent.com/34508318/205659161-2a27b43f-cdb8-4f12-8013-18707de57271.JPG)
