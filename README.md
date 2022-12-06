@@ -22,7 +22,7 @@ Our team consists of the following members, listed in the table below (the team 
 | 121090003  | 包景致        | zqlwmatt@gmail.com        |
 | 120040061  | 汪宁远        | 120040061@link.cuhk.edu.cn|
 | 120090108  | 周炜          | 120090108@link.cuhk.edu.cn|
-| 120090792  | 黄子蒙        | 120090792@link.cuhk.edu.cn|
+| 120090792  | 黄子蒙        | 2207070095@qq.com|
 | 120090784  | 尹启骅        | 120090784@link.cuhk.edu.cn|
 | 119010306  | 王睿奕        | 119010306@link.cuhk.edu.cn|
 ## Project Specification
