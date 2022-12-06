@@ -7,20 +7,29 @@
 // solutions.
 package db61b;
 
-// FILL IN (WITH IMPORTS)?
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+import static db61b.Utils.*;
 
 /** A collection of Tables, indexed by name.
  *  @author */
 class Database {
     /** An empty database. */
     public Database() {
-        // FILL IN
+        tables_ = new ArrayList<Table>();
+        tableNames_ = new ArrayList<String>();
     }
 
     /** Return the Table whose name is NAME stored in this database, or null
      *  if there is no such table. */
     public Table get(String name) {
-        return null;             // REPLACE WITH SOLUTION
+        if (tableNames_.contains(name)) {
+            return tables_.get(tableNames_.indexOf(name));
+        }
+        return null;
     }
 
     /** Set or replace the table named NAME in THIS to TABLE.  TABLE and
@@ -28,9 +37,35 @@ class Database {
     public void put(String name, Table table) {
         if (name == null || table == null) {
             throw new IllegalArgumentException("null argument");
+        } 
+        else {
+            tables_.add(table);
+            tableNames_.add(name);
         }
-        // FILL IN
     }
 
-    // FILL IN?
+    public void remove(String name) {
+        if (name == null) {
+            throw error("no such table: %s", name);
+        } 
+        else {
+            tables_.remove(tableNames_.indexOf(name));
+            tableNames_.remove(name);
+        }
+    }
+
+    /** Return an iterator over all the tables in the database. */
+    public Iterator<Table> iterator() {
+        return tables_.iterator();
+    }
+
+    /** Return a list of the names of all the tables in the database. */
+    public List<String> tableNames() {
+        return tableNames_;
+    }
+
+    /** My tables. */
+    private ArrayList<Table> tables_;
+    /** My table names. */
+    private ArrayList<String> tableNames_;
 }

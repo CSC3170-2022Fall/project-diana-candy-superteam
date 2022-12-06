@@ -17,7 +17,7 @@ class Row {
     /** A Row whose column values are DATA.  The array DATA must not be altered
      *  subsequently. */
     Row(String[] data) {
-        _data = data;
+        data_ = data;
     }
 
     /** Given M COLUMNS that were created from a sequence of Tables
@@ -40,22 +40,28 @@ class Row {
      *  consider converting this spec to HTML using the Javadoc command.
      */
     Row(List<Column> columns, Row... rows) {
-        // FILL IN
+        data_ = new String[columns.size()];
+        for (int i = 0; i < columns.size(); i++) {
+            data_[i] = columns.get(i).getFrom(rows);
+        }
     }
 
     /** Return my number of columns. */
     int size() {
-        return 0;  // REPLACE WITH SOLUTION
+        return data_.length;
     }
 
     /** Return the value of my Kth column.  Requires that 0 <= K < size(). */
     String get(int k) {
-        return null; // REPLACE WITH SOLUTION
+        return data_[k];
     }
 
     @Override
     public boolean equals(Object obj) {
-        return false; // REPLACE WITH SOLUTION
+        if (obj instanceof Row) {
+            return Arrays.equals(data_, ((Row) obj).data_);
+        }
+        return false;
     }
 
     /* NOTE: Whenever you override the .equals() method for a class, you
@@ -68,9 +74,9 @@ class Row {
 
     @Override
     public int hashCode() {
-        return Arrays.hashCode(_data);
+        return Arrays.hashCode(data_);
     }
 
     /** Contents of this row. */
-    private String[] _data;
+    private String[] data_;
 }
