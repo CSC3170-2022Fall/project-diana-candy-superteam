@@ -52,6 +52,7 @@ Our project mainly focuses on the `Command Interpreter` module and database stru
 
 **Project codes:** https://github.com/CSC3170-2022Fall/project-diana-candy-superteam/tree/db61b
 
+## [Notion Pamphlet](https://magic-chair-572.notion.site/CSC3170-Project-Pamphlet-c0cbaadee8814760a55b3a1eef0328b3)
 
 ## Timeline
 
