@@ -22,7 +22,7 @@ Our team consists of the following members, listed in the table below (the team 
 | 121090003  | 包景致        | zqlwmatt@gmail.com        | @[ZqlwMatt](https://github.com/ZqlwMatt) |
 | 120040061  | 汪宁远        | 120040061@link.cuhk.edu.cn| @[0x727AA7D](https://github.com/0x727AA7D) |
 | 120090108  | 周炜          | 120090108@link.cuhk.edu.cn| @[WilhelmZhou](https://github.com/WilhelmZhou) |
-| 120090792  | 黄子蒙        | 2207070095@qq.com         | @[aster-Pyda](https://github.com/Master-Pyda) |
+| 120090792  | 黄子蒙        | 2207070095@qq.com         | @[Master-Pyda](https://github.com/Master-Pyda) |
 | 120090784  | 尹启骅        | 120090784@link.cuhk.edu.cn| @[edward-coding](https://github.com/edward-coding) |
 | 119010306  | 王睿奕        | 119010306@link.cuhk.edu.cn| @[wry1205](https://github.com/wry1205) |
 
