@@ -16,15 +16,16 @@ Our team consists of the following members, listed in the table below (the team 
 
 <!-- change the info below to be the real case -->
 
-| Student ID | Student Name | GitHub Account (in Email) |
-| ---------- | ------------ | ------------------------- |
-| 119020401  | 王嘉茗 🚩     | 119020401@link.cuhk.edu.cn|
-| 121090003  | 包景致        | zqlwmatt@gmail.com        |
-| 120040061  | 汪宁远        | 120040061@link.cuhk.edu.cn|
-| 120090108  | 周炜          | 120090108@link.cuhk.edu.cn|
-| 120090792  | 黄子蒙        | 2207070095@qq.com|
-| 120090784  | 尹启骅        | 120090784@link.cuhk.edu.cn|
-| 119010306  | 王睿奕        | 119010306@link.cuhk.edu.cn|
+| Student ID | Student Name | GitHub Account (in Email) | GitHub UserName |
+| ---------- | ------------ | ------------------------- | --------------- |
+| 119020401  | 王嘉茗 🚩     | 119020401@link.cuhk.edu.cn|                  |
+| 121090003  | 包景致        | zqlwmatt@gmail.com        | @[ZqlwMatt](https://github.com/ZqlwMatt) |
+| 120040061  | 汪宁远        | 120040061@link.cuhk.edu.cn|                 |
+| 120090108  | 周炜          | 120090108@link.cuhk.edu.cn|                 |
+| 120090792  | 黄子蒙        | 2207070095@qq.com         |                 |
+| 120090784  | 尹启骅        | 120090784@link.cuhk.edu.cn|                 |
+| 119010306  | 王睿奕        | 119010306@link.cuhk.edu.cn|                 |
+
 ## Project Specification
 
 <!-- You should remove the terms/sentence that is not necessary considering your option/branch/difficulty choice -->
