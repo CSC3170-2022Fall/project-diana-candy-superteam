@@ -26,13 +26,24 @@ class Column {
     String getName() {
         return _name;
     }
+    
+    /** Return _column */
+    int getColumn() {
+        return _column;
+    }
 
+    /** Return _table */
+    int getTable() {
+        return _table;
+    }
 
     /** Returns the value of this Column from ROWS[_table]. Assumes that
      *  ROWS[_table] is from the same table that was provided to the
-     *  constructor of this Column. More generally, this method is intended
-     *  such that ROWS[k] coresponds to the kth table that was supplied to
-     *  the constructor for this method.
+     *  constructor of this Column. 
+     *  
+     ** More generally, this method is intended
+     ** *such that ROWS[k] coresponds to the kth table that was supplied to
+     ** the constructor for this method.
      *
      *  Despite the fact that many rows are passed to this function, this
      *  function returns only one value.

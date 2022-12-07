@@ -9,6 +9,7 @@ package db61b;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Iterator;
 
 /** A single row of a database.
  *  @author
@@ -53,7 +54,15 @@ class Row {
 
     /** Return the value of my Kth column.  Requires that 0 <= K < size(). */
     String get(int k) {
-        return data_[k];
+        if (0 <= k && k < size()) {
+            return data_[k];
+        }
+        return "";
+    }
+
+    /** Returen the value of all data */
+    String[] getAll() {
+        return data_;
     }
 
     @Override

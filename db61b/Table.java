@@ -27,6 +27,7 @@ class Table implements Iterable<Row> {
     /** A new Table whose columns are given by COLUMNTITLES, which may
      *  not contain dupliace names. */
     Table(String[] columnTitles) {
+        /** check the validity of column names */
         for (int i = columnTitles.length - 1; i >= 1; i -= 1) {
             for (int j = i - 1; j >= 0; j -= 1) {
                 if (columnTitles[i].equals(columnTitles[j])) {
@@ -35,8 +36,9 @@ class Table implements Iterable<Row> {
                 }
             }
         }
-        // FILL IN
-    }
+        _columnTitles = columnTitles;
+        _rows = new HashSet<Row>();
+    } 
 
     /** A new Table whose columns are give by COLUMNTITLES. */
     Table(List<String> columnTitles) {
@@ -45,23 +47,28 @@ class Table implements Iterable<Row> {
 
     /** Return the number of columns in this table. */
     public int columns() {
-        return 0;  // REPLACE WITH SOLUTION
+        return _columnTitles.length;
     }
 
     /** Return the title of the Kth column.  Requires 0 <= K < columns(). */
     public String getTitle(int k) {
-        return null;  // REPLACE WITH SOLUTION
+        return _columnTitles[k];
     }
 
     /** Return the number of the column whose title is TITLE, or -1 if
      *  there isn't one. */
     public int findColumn(String title) {
-        return -1;  // REPLACE WITH SOLUTION
+        for (int i = 0; i < _columnTitles.length; i++) {
+            if (_columnTitles[i].equals(title)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /** Return the number of Rows in this table. */
     public int size() {
-        return 0;  // REPLACE WITH SOLUTION
+        return _rows.size();
     }
 
     /** Returns an iterator that returns my rows in an unspecfied order. */
@@ -73,7 +80,7 @@ class Table implements Iterable<Row> {
     /** Add ROW to THIS if no equal row already exists.  Return true if anything
      *  was added, false otherwise. */
     public boolean add(Row row) {
-        return false;   // REPLACE WITH SOLUTION
+        return _rows.add(row);
     }
 
     /** Read the contents of the file NAME.db, and return as a Table.
@@ -90,7 +97,18 @@ class Table implements Iterable<Row> {
                 throw error("missing header in DB file");
             }
             String[] columnNames = header.split(",");
-            // FILL IN
+            table = new Table(columnNames);
+            String line;
+            while ((line = input.readLine()) != null) {
+                String[] values = line.split(",");
+                if (values.length != columnNames.length) {
+                    throw error("wrong number of values in DB file");
+                }
+                Row row = new Row(values);
+                if (!table.add(row)) {
+                    throw error("duplicate row in DB file");
+                }
+            }
         } catch (FileNotFoundException e) {
             throw error("could not find %s.db", name);
         } catch (IOException e) {
@@ -116,7 +134,22 @@ class Table implements Iterable<Row> {
             String sep;
             sep = "";
             output = new PrintStream(name + ".db");
-            // FILL THIS IN
+            for (String title : _columnTitles) {
+                output.print(sep);
+                output.print(title);
+                sep = ",";
+            }
+            output.println();
+
+            for (Row row : _rows) {
+                sep = "";
+                for (String value : row.getAll()) {
+                    output.print(sep);
+                    output.print(value);
+                    sep = ",";
+                }
+                output.println();
+            }
         } catch (IOException e) {
             throw error("trouble writing to %s.db", name);
         } finally {
@@ -128,7 +161,24 @@ class Table implements Iterable<Row> {
 
     /** Print my contents on the standard output. */
     void print() {
-        // FILL IN
+        String sep;
+        sep = "";
+        for (String title : _columnTitles) {
+            System.out.print(sep);
+            System.out.print(title);
+            sep = "\t";
+        }
+        System.out.println();
+
+        for (Row row : _rows) {
+            sep = "";
+            for (String value : row.getAll()) {
+                System.out.print(sep);
+                System.out.print(value);
+                sep = "\t";
+            }
+            System.out.println();
+        }
     }
 
     /** Return a new Table whose columns are COLUMNNAMES, selected from
@@ -157,11 +207,19 @@ class Table implements Iterable<Row> {
      *  from those tables. */
     private static boolean equijoin(List<Column> common1, List<Column> common2,
                                     Row row1, Row row2) {
-        return true; // REPLACE WITH SOLUTION
+        if (common1.size() != common2.size()) return false;
+        if (row1.size() != row2.size()) return false;
+
+        for (int i = 0; i < common1.size(); i++) {
+            if (!row1.get(common1.get(i).getColumn()).equals(row2.get(common2.get(i).getColumn()))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /** My rows. */
     private HashSet<Row> _rows = new HashSet<>();
-    // FILL IN
+    private String[] _columnTitles;
 }
 
