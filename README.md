@@ -40,6 +40,8 @@ After thorough discussion, our team made the choice and the specification inform
 
 > This project involves writing a miniature relational database management system (DBMS) that stores tables of data, where a table consists of some number of labeled columns of information. Our system will include a very simple query language for extracting information from these tables. For the purposes of this project, we will deal only with very small databases, and therefore will not consider speed and efficiency at all.
 
+**Full description:** https://inst.eecs.berkeley.edu/~cs61b/fa14/hw/proj1.pdf
+
 ## Project Abstract
 
 ![project_description](https://user-images.githubusercontent.com/34508318/205655270-b90103a7-7664-4879-9aa8-5bd52fde1c8e.png)
