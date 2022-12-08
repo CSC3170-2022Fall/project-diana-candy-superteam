@@ -166,7 +166,7 @@ class CommandInterpreter {
         _input.next("table");
         String name = name();
         Table table = tableDefinition();
-        // FILL IN CODE TO EXECUTE THE STATEMENT
+        _database.put(name, table);
         _input.next(";");
     }
 
@@ -198,7 +198,17 @@ class CommandInterpreter {
 
     /** Parse and execute a load statement from the token stream. */
     void loadStatement() {
-        // FILL THIS IN
+        _input.next("load");
+        String name = _input.peek();
+        if (_database.get(name) == null) {
+            throw error("%s.db already exists", name);
+        }
+        else {
+            Table table = Table.readTable(name);
+            _database.put(name, table);
+            System.out.printf("Loaded %s.db%n", name);
+            _input.next(";");
+        }
     }
 
     /** Parse and execute a store statement from the token stream. */
@@ -206,14 +216,18 @@ class CommandInterpreter {
         _input.next("store");
         String name = _input.peek();
         Table table = tableName();
-        // FILL THIS IN
+        table.writeTable(name);
         System.out.printf("Stored %s.db%n", name);
         _input.next(";");
     }
 
     /** Parse and execute a print statement from the token stream. */
     void printStatement() {
-        // FILL THIS IN
+        _input.next("print");
+        Table table = tableName();
+        // System.out.println(table);
+        table.print();
+        _input.next(";");
     }
 
     /** Parse and execute a select statement from the token stream. */
@@ -224,13 +238,19 @@ class CommandInterpreter {
     /** Parse and execute a table definition, returning the specified
      *  table. */
     Table tableDefinition() {
-        Table table;
+        Table table = null;
         if (_input.nextIf("(")) {
-            // REPLACE WITH SOLUTION
-            table = null;
-        } else {
-            // REPLACE WITH SOLUTION
-            table = null;
+            ArrayList<String> columnNames = new ArrayList<>();
+            columnNames.add(columnName());
+            while (_input.nextIf(",")) {
+                columnNames.add(columnName());
+            }
+            _input.next(")");
+            table = new Table(columnNames);
+        }
+        else {
+            _input.next("as");
+            table = selectClause();
         }
         return table;
     }
