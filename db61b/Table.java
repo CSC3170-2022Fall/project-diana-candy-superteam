@@ -211,7 +211,7 @@ class Table implements Iterable<Row> {
         if (row1.size() != row2.size()) return false;
 
         for (int i = 0; i < common1.size(); i++) {
-            if (!row1.get(common1.get(i).getColumn()).equals(row2.get(common2.get(i).getColumn()))) {
+            if (!row1.get(common1.get(i).getColumnIndex()).equals(row2.get(common2.get(i).getColumnIndex()))) {
                 return false;
             }
         }

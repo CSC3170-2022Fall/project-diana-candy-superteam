@@ -62,7 +62,7 @@ class Row {
 
     /** Returen the value of all data */
     String[] getAll() {
-        return data_;
+        return data_.clone();
     }
 
     @Override
