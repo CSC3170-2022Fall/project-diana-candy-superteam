@@ -38,6 +38,10 @@ class Table implements Iterable<Row> {
         }
         _columnTitles = columnTitles;
         _rows = new HashSet<Row>();
+        _columns = new ArrayList<Column>();
+        for (String title : columnTitles) {
+            _columns.add(new Column(title, this));
+        }
     } 
 
     /** A new Table whose columns are give by COLUMNTITLES. */
@@ -45,8 +49,13 @@ class Table implements Iterable<Row> {
         this(columnTitles.toArray(new String[columnTitles.size()]));
     }
 
+    /** Return the column list */
+    public List<Column> columns() {
+        return _columns;
+    }
+
     /** Return the number of columns in this table. */
-    public int columns() {
+    public int columnSize() {
         return _columnTitles.length;
     }
 
@@ -185,7 +194,11 @@ class Table implements Iterable<Row> {
      *  rows of this table that satisfy CONDITIONS. */
     Table select(List<String> columnNames, List<Condition> conditions) {
         Table result = new Table(columnNames);
-        // FILL IN
+        for (Row row : this) { // iterate over rows of this table
+            if (Condition.test(conditions, row)) {
+                result.add(row.select(columnNames));
+            }
+        }
         return result;
     }
 
@@ -195,7 +208,25 @@ class Table implements Iterable<Row> {
     Table select(Table table2, List<String> columnNames,
                  List<Condition> conditions) {
         Table result = new Table(columnNames);
-        // FILL IN
+        List<Column> common1 = new ArrayList<>();
+        List<Column> common2 = new ArrayList<>();
+        
+        for (Column c1 : this.columns()) {
+            for (Column c2 : table2.columns()) {
+                if (c1.getName().equals(c2.getName())) {
+                    common1.add(c1);
+                    common2.add(c2);
+                }
+            }
+        }
+
+        for (Row row1 : this) {
+            for (Row row2 : table2) {
+                if (equijoin(common1, common2, row1, row2) && Condition.test(conditions, row1, row2)) {
+                    result.add(row1.select(columnNames));
+                }
+            }
+        }
         return result;
     }
 
@@ -219,7 +250,8 @@ class Table implements Iterable<Row> {
     }
 
     /** My rows. */
-    private HashSet<Row> _rows = new HashSet<>();
+    private HashSet<Row> _rows;
     private String[] _columnTitles;
+    private List<Column> _columns;
 }
 
