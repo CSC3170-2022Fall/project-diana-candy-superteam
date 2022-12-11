@@ -38,6 +38,11 @@ class Database {
         if (name == null || table == null) {
             throw new IllegalArgumentException("null argument");
         } 
+        // replace table
+        else if (tableNames_.contains(name)) {
+            tables_.set(tableNames_.indexOf(name), table);
+        } 
+        // add table
         else {
             tables_.add(table);
             tableNames_.add(name);
@@ -49,8 +54,14 @@ class Database {
             throw error("no such table: %s", name);
         } 
         else {
-            tables_.remove(tableNames_.indexOf(name));
-            tableNames_.remove(name);
+            int index = tableNames_.indexOf(name);
+            if (index == -1) {
+                throw error("no such table: %s", name);
+            }
+            else {
+                tables_.remove(index);
+                tableNames_.remove(name);
+            }
         }
     }
 

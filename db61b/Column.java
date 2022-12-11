@@ -22,18 +22,18 @@ class Column {
         throw error("unknown column: %s", name);
     }
 
-    /** Return my name. */
+    /** Return _name */
     String getName() {
         return _name;
     }
     
     /** Return _column */
-    int getColumn() {
+    int getColumnIndex() {
         return _column;
     }
 
     /** Return _table */
-    int getTable() {
+    int getTableIndex() {
         return _table;
     }
 
