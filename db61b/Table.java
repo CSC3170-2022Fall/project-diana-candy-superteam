@@ -67,7 +67,7 @@ class Table implements Iterable<Row> {
     /** Return the number of the column whose title is TITLE, or -1 if
      *  there isn't one. */
     public int findColumn(String title) {
-        for (int i = 0; i < _columnTitles.length; i++) {
+        for (int i = 0; i < _columnTitles.length; ++i) {
             if (_columnTitles[i].equals(title)) {
                 return i;
             }
@@ -95,10 +95,8 @@ class Table implements Iterable<Row> {
     /** Read the contents of the file NAME.db, and return as a Table.
      *  Format errors in the .db file cause a DBException. */
     static Table readTable(String name) {
-        BufferedReader input;
-        Table table;
-        input = null;
-        table = null;
+        BufferedReader input = null;
+        Table table = null;
         try {
             input = new BufferedReader(new FileReader(name + ".db"));
             String header = input.readLine();
@@ -137,8 +135,7 @@ class Table implements Iterable<Row> {
     /** Write the contents of TABLE into the file NAME.db. Any I/O errors
      *  cause a DBException. */
     void writeTable(String name) {
-        PrintStream output;
-        output = null;
+        PrintStream output = null;
         try {
             String sep;
             sep = "";
@@ -188,6 +185,36 @@ class Table implements Iterable<Row> {
             }
             System.out.println();
         }
+    }
+
+    /** Return the cartesian product of two tables. */
+    Table join(Table table2, List<Condition> conditions) {
+        List<String> columnNames = new ArrayList<>();
+        for (String title : _columnTitles)         columnNames.add(title);
+        for (String title : table2._columnTitles)  columnNames.add(title);
+
+        Table result = new Table(columnNames);
+        for (Row row1 : this) {
+            for (Row row2 : table2) {
+                Row row = row1.join(row2);
+                if (Condition.test(conditions, row)) {
+                    result.add(row);
+                }
+            }
+        }
+        return result;
+    }
+
+    /** Return the cartesian product of multiple tables. */
+    Table join(Table[] tables, List<Condition> conditions) {
+        if (tables.length == 0) {
+            return this;
+        }
+        Table result = this;
+        for (Table table : tables) {
+            result = result.join(table, conditions);
+        }
+        return result;
     }
 
     /** Return a new Table whose columns are COLUMNNAMES, selected from

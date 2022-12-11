@@ -13,7 +13,7 @@ class Column {
     /** Selects column named NAME from a row of one of the given TABLES. */
     Column(String name, Table... tables) {
         _name = name;
-        for (_table = 0; _table < tables.length; _table += 1) {
+        for (_table = 0; _table < tables.length; ++_table) {
             _column = tables[_table].findColumn(name);
             if (_column != -1) {
                 return;
