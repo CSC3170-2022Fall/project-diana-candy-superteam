@@ -97,8 +97,8 @@ class Table implements Iterable<Row> {
     static Table readTable(String name) {
         BufferedReader input = null;
         Table table = null;
-        try {
-            input = new BufferedReader(new FileReader(name + ".db"));
+        try { 
+            input = new BufferedReader(new FileReader("D:/DataBaseProject/project-diana-candy-superteam/testing/"+name + ".db"));
             String header = input.readLine();
             if (header == null) {
                 throw error("missing header in DB file");
@@ -139,7 +139,7 @@ class Table implements Iterable<Row> {
         try {
             String sep;
             sep = "";
-            output = new PrintStream(name + ".db");
+            output = new PrintStream("./testing/"+name + ".db");
             for (String title : _columnTitles) {
                 output.print(sep);
                 output.print(title);
@@ -206,8 +206,8 @@ class Table implements Iterable<Row> {
     }
 
     /** Return the cartesian product of multiple tables. */
-    Table join(Table[] tables, List<Condition> conditions) {
-        if (tables.length == 0) {
+    Table join(List<Table> tables, List<Condition> conditions) {
+        if (tables.size() == 0) {
             return this;
         }
         Table result = this;
