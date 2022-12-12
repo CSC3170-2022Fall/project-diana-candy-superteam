@@ -11,6 +11,7 @@ package db61b;
 import java.io.PrintStream;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static db61b.Utils.*;
@@ -200,7 +201,8 @@ class CommandInterpreter {
     void loadStatement() {
         _input.next("load");
         String name = _input.peek();
-        if (_database.get(name) == null) {
+        _input.next(name);
+        if (_database.get(name) != null) {
             throw error("%s.db already exists", name);
         }
         else {
@@ -215,6 +217,7 @@ class CommandInterpreter {
     void storeStatement() {
         _input.next("store");
         String name = _input.peek();
+        _input.next(name);
         Table table = tableName();
         table.writeTable(name);
         System.out.printf("Stored %s.db%n", name);
@@ -232,7 +235,10 @@ class CommandInterpreter {
 
     /** Parse and execute a select statement from the token stream. */
     void selectStatement() {
-        // FILL THIS IN
+        Table table = selectClause();
+        System.out.println("Search results:");
+        table.print();
+        _input.next(";");
     }
 
     /** Parse and execute a table definition, returning the specified
@@ -258,8 +264,49 @@ class CommandInterpreter {
     /** Parse and execute a select clause from the token stream, returning the
      *  resulting table. */
     Table selectClause() {
-        return null;         // REPLACE WITH SOLUTION
+        _input.next("select"); // read column names
+        ArrayList<String> colNames = new ArrayList<>();
+        
+        if (_input.nextIf("*")) {
+            colNames.add("*");
+        }
+        else {
+            colNames.add(columnName());
+            while (_input.nextIf(",")) {
+                colNames.add(columnName());
+            }
+        }
 
+        _input.next("from"); // read table names
+        List<Table> tableList = new ArrayList<Table>();
+        tableList.add(tableName());
+        while (_input.nextIf(",")) {
+            tableList.add(tableName());
+        }
+
+        List<Condition> condiList = new ArrayList<Condition>();
+        if (_input.nextIf("where")) {
+            // Table[] tableArray = (Table[]) tableList.toArray();
+            condiList = conditionClause(tableList.toArray(new Table[tableList.size()]));
+        }
+
+        // filter each table with the target columns
+        List<Table> filteredList = new ArrayList<Table>();
+        for (int i = 0; i < tableList.size() ; i++) {
+            Table tempTable = tableList.get(i);
+            for (int c = 0; c < colNames.size(); c++) {
+                Table filteredTable = tempTable.select(colNames, condiList);
+                filteredList.add(filteredTable);
+            }
+        }
+
+        // combine tables
+        Table resultTable = filteredList.get(0);
+        for (int i = 1; i < filteredList.size() ; i++) {
+            Table tempTable = filteredList.get(i);
+            resultTable.join(tempTable, condiList);
+        }
+        return resultTable;         // REPLACE WITH SOLUTION
     }
 
     /** Parse and return a valid name (identifier) from the token stream. */
@@ -296,13 +343,38 @@ class CommandInterpreter {
      *  token stream.  This denotes the conjunction (`and') zero
      *  or more Conditions. */
     ArrayList<Condition> conditionClause(Table... tables) {
-        return null;        // REPLACE WITH SOLUTION
+        ArrayList<Condition> condiList = new ArrayList<>();
+
+        condiList.add(condition(tables)); // parse the first condition
+        while (_input.peek() == "and"){ // parse the possible other condition
+            _input.next("and");
+            condiList.add(condition(tables));
+        }
+        _input.next(";");
+        return condiList;        // REPLACE WITH SOLUTION
     }
 
     /** Parse and return a Condition that applies to TABLES from the
      *  token stream. */
+    // 单个 condition
     Condition condition(Table... tables) {
-        return null;        // REPLACE WITH SOLUTION
+        String col1Name = columnName();
+        String relation = _input.next();
+        Column result1 = new Column(col1Name, tables);
+        
+        String col2Name;
+        Column result2;
+
+        // literal 也许有问题.
+        if (_input.nextIf(Tokenizer.LITERAL)) {
+            col2Name = literal();
+            return new Condition(result1, relation, col2Name);
+        }
+        else {
+            col2Name = columnName();
+            result2 = new Column(col2Name, tables);
+            return new Condition(result1, relation, result2);
+        }
     }
 
     /** Advance the input past the next semicolon. */
