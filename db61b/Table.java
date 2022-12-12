@@ -97,8 +97,8 @@ class Table implements Iterable<Row> {
     static Table readTable(String name) {
         BufferedReader input = null;
         Table table = null;
-        try {
-            input = new BufferedReader(new FileReader(name + ".db"));
+        try { 
+            input = new BufferedReader(new FileReader("./testing/"+name + ".db"));
             String header = input.readLine();
             if (header == null) {
                 throw error("missing header in DB file");
@@ -107,6 +107,7 @@ class Table implements Iterable<Row> {
             table = new Table(columnNames);
             String line;
             while ((line = input.readLine()) != null) {
+                System.out.println(line);
                 String[] values = line.split(",");
                 if (values.length != columnNames.length) {
                     throw error("wrong number of values in DB file");
@@ -139,7 +140,7 @@ class Table implements Iterable<Row> {
         try {
             String sep;
             sep = "";
-            output = new PrintStream(name + ".db");
+            output = new PrintStream("./testing/"+name + ".db");
             for (String title : _columnTitles) {
                 output.print(sep);
                 output.print(title);
@@ -165,26 +166,32 @@ class Table implements Iterable<Row> {
         }
     }
 
-    /** Print my contents on the standard output. */
-    void print() {
+    public String toString() {
+        String result = "";
         String sep;
         sep = "";
         for (String title : _columnTitles) {
-            System.out.print(sep);
-            System.out.print(title);
+            result += sep;
+            result += title;
             sep = "\t";
         }
-        System.out.println();
+        result += "\n";
 
         for (Row row : _rows) {
             sep = "";
             for (String value : row.getAll()) {
-                System.out.print(sep);
-                System.out.print(value);
+                result += sep;
+                result += value;
                 sep = "\t";
             }
-            System.out.println();
+            result += "\n";
         }
+        return result;
+    }
+
+    /** Print my contents on the standard output. */
+    void print() {
+        System.out.println(this);
     }
 
     /** Return the cartesian product of two tables. */
@@ -206,8 +213,8 @@ class Table implements Iterable<Row> {
     }
 
     /** Return the cartesian product of multiple tables. */
-    Table join(Table[] tables, List<Condition> conditions) {
-        if (tables.length == 0) {
+    Table join(List<Table> tables, List<Condition> conditions) {
+        if (tables.size() == 0) {
             return this;
         }
         Table result = this;
@@ -220,13 +227,39 @@ class Table implements Iterable<Row> {
     /** Return a new Table whose columns are COLUMNNAMES, selected from
      *  rows of this table that satisfy CONDITIONS. */
     Table select(List<String> columnNames, List<Condition> conditions) {
-        Table result = new Table(columnNames);
-        for (Row row : this) { // iterate over rows of this table
-            if (Condition.test(conditions, row)) {
-                result.add(row.select(columnNames));
+        if (columnNames == null) { // select *
+            columnNames = Arrays.asList(_columnTitles);
+            Table result = new Table(columnNames);
+            for (Row row : this) {
+                if (Condition.test(conditions, row)) {
+                    result.add(row);
+                }
             }
+            return result;
         }
-        return result;
+        else { // select ,
+            Table result = new Table(columnNames);
+            for (Row row : this) { // iterate over rows of this table
+                if (Condition.test(conditions, row)) {
+                    ArrayList<String> values = new ArrayList<String>();
+                    for (String columnName : columnNames) {
+                        int ok = 0;
+                        for (int i = 0; i < _columnTitles.length; ++i) {
+                            if (_columnTitles[i].equals(columnName)) {
+                                values.add(row.get(i));
+                                ok = 1;
+                                break;
+                            }
+                        }
+                        if (ok == 0) {
+                            throw error("column name not found");
+                        }
+                    }
+                    result.add(new Row(values.toArray(new String[values.size()])));
+                }
+            }
+            return result;
+        }
     }
 
     /** Return a new Table whose columns are COLUMNNAMES, selected
@@ -250,7 +283,13 @@ class Table implements Iterable<Row> {
         for (Row row1 : this) {
             for (Row row2 : table2) {
                 if (equijoin(common1, common2, row1, row2) && Condition.test(conditions, row1, row2)) {
-                    result.add(row1.select(columnNames));
+                    ArrayList<String> values = new ArrayList<String>();
+                    for (int i = 0; i < _columnTitles.length; ++i) {
+                        if (columnNames.contains(_columnTitles[i])) {
+                            values.add(row1.get(i));
+                        }
+                    }
+                    result.add(new Row(values.toArray(new String[values.size()])));
                 }
             }
         }
