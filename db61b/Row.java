@@ -1,3 +1,4 @@
+// Edward
 // This is a SUGGESTED skeleton for a class that describes a single Row of a
 // Table. You can throw this away if you want, but it is a good idea to try to
 // understand it first.  Our solution changes or adds about 10 lines in this
