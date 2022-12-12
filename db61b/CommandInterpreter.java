@@ -187,7 +187,7 @@ class CommandInterpreter {
         Table table = tableName();
         _input.next("values");
 
-        ArrayList<String> values = new ArrayList<>();
+        ArrayList<String> values = new ArrayList<String>();
         values.add(literal());
         while (_input.nextIf(",")) {
             values.add(literal());
@@ -207,6 +207,7 @@ class CommandInterpreter {
         }
         else {
             Table table = Table.readTable(name);
+            // System.out.println(table);
             _database.put(name, table);
             System.out.printf("Loaded %s.db%n", name);
             _input.next(";");
@@ -229,15 +230,15 @@ class CommandInterpreter {
         _input.next("print");
         Table table = tableName();
         // System.out.println(table);
-        table.print();
+        System.out.println(table);
         _input.next(";");
     }
 
     /** Parse and execute a select statement from the token stream. */
     void selectStatement() {
+        _input.next("select"); // read column names
         Table table = selectClause();
-        System.out.println("Search results:");
-        table.print();
+        System.out.println(table);
         _input.next(";");
     }
 
@@ -245,30 +246,30 @@ class CommandInterpreter {
      *  table. */
     Table tableDefinition() {
         Table table = null;
-        if (_input.nextIf("(")) {
-            ArrayList<String> columnNames = new ArrayList<>();
+        // 先不管 as 了
+        // if (_input.nextIf("(")) {
+        ArrayList<String> columnNames = new ArrayList<String>();
+        columnNames.add(columnName());
+        while (_input.nextIf(",")) {
             columnNames.add(columnName());
-            while (_input.nextIf(",")) {
-                columnNames.add(columnName());
-            }
-            _input.next(")");
-            table = new Table(columnNames);
         }
-        else {
-            _input.next("as");
-            table = selectClause();
-        }
+        _input.next(")");
+        table = new Table(columnNames);
+        // }
+        // else {
+        //     _input.next("as");
+        //     table = selectClause();
+        // }
         return table;
     }
 
     /** Parse and execute a select clause from the token stream, returning the
      *  resulting table. */
     Table selectClause() {
-        _input.next("select"); // read column names
         ArrayList<String> colNames = new ArrayList<>();
         
         if (_input.nextIf("*")) {
-            colNames.add("*");
+            colNames = null;
         }
         else {
             colNames.add(columnName());
@@ -292,21 +293,17 @@ class CommandInterpreter {
 
         // filter each table with the target columns
         List<Table> filteredList = new ArrayList<Table>();
-        for (int i = 0; i < tableList.size() ; i++) {
-            Table tempTable = tableList.get(i);
-            for (int c = 0; c < colNames.size(); c++) {
-                Table filteredTable = tempTable.select(colNames, condiList);
-                filteredList.add(filteredTable);
-            }
+        for (Table table : tableList) {
+            // System.out.println(table);
+            // System.out.println(table.select(colNames, condiList));
+            filteredList.add(table.select(colNames, condiList));
         }
-
-        // combine tables
-        Table resultTable = filteredList.get(0);
+        Table resultTable = null;
+        resultTable = filteredList.get(0);
         for (int i = 1; i < filteredList.size() ; i++) {
-            Table tempTable = filteredList.get(i);
-            resultTable.join(tempTable, condiList);
+            resultTable.join(filteredList.get(i), condiList);
         }
-        return resultTable;         // REPLACE WITH SOLUTION
+        return resultTable;
     }
 
     /** Parse and return a valid name (identifier) from the token stream. */

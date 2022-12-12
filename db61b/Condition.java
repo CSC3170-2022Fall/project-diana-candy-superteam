@@ -35,7 +35,7 @@ class Condition {
      *  denote. */
     boolean test(Row... rows) {
         // REPLACE WITH SOLUTION
-        return false;
+        return true;
     }
 
     /** Return true iff ROWS satisfies all CONDITIONS. */

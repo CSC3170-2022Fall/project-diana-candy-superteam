@@ -90,25 +90,16 @@ class Row {
         return result;
     }
 
-    /** Select the specific columns by columnNames */
-    Row select(List<String> columnNames) {
-        String[] data = new String[columnNames.size()];
-        for (int i = 0; i < columnNames.size(); ++i) {
-            for (int j = 0; j < data_.length; ++j) {
-                if (columnNames.get(i).equals(data_[j])) {
-                    data[i] = data_[j];
-                }
-            }
-        }
-        return new Row(data);
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Row) {
             return Arrays.equals(data_, ((Row) obj).data_);
         }
         return false;
+    }
+
+    public String toString() {
+        return Arrays.toString(data_);
     }
 
     /* NOTE: Whenever you override the .equals() method for a class, you
