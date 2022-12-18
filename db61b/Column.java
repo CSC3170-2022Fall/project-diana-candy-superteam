@@ -13,18 +13,37 @@ class Column {
     /** Selects column named NAME from a row of one of the given TABLES. */
     Column(String name, Table... tables) {
         _name = name;
-        for (_table = 0; _table < tables.length; ++_table) {
-            _column = tables[_table].findColumn(name);
-            if (_column != -1) {
-                return;
+        int cnt = 0, index;
+        for (Table table : tables) {
+            index = table.findColumn(name);
+            if (index != -1) {
+                cnt++;
+                _column = index;
+                _tableName = table.getName();
+                _fullName = _tableName + "." + _name;
             }
         }
-        throw error("unknown column: %s", name);
+        if (cnt == 0) {
+            throw error("Column Error: unknown column: %s", name);
+        }
+        if (cnt > 1) {
+            throw error("Column Error: duplicate columns in tables");
+        }
+    }
+
+    /** Return complate name */
+    String getFullName() {
+        return _fullName;
     }
 
     /** Return _name */
     String getName() {
         return _name;
+    }
+
+    /** Return _tableName */
+    String getTableName() {
+        return _tableName;
     }
     
     /** Return _column */
@@ -33,9 +52,9 @@ class Column {
     }
 
     /** Return _table */
-    int getTableIndex() {
-        return _table;
-    }
+    // int getTableIndex() {
+    //     return _table;
+    // }
 
     /** Returns the value of this Column from ROWS[_table]. Assumes that
      *  ROWS[_table] is from the same table that was provided to the
@@ -48,12 +67,13 @@ class Column {
      *  Despite the fact that many rows are passed to this function, this
      *  function returns only one value.
      */
-    String getFrom(Row... rows) {
-        return rows[_table].get(_column);
-    }
+    // String getFrom(Row... rows) {
+    //     return rows[_table].get(_column);
+    // }
 
     /** Column name denoted by THIS. */
-    private String _name;
+    private String _name, _tableName, _fullName;
     /** Index of the table and column from which to extract a value. */
-    private int _table, _column;
+    // private int _table;
+    private int _column;
 }
