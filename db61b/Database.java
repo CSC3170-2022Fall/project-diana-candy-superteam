@@ -36,7 +36,7 @@ class Database {
      *  NAME must not be null, and NAME must be a valid name for a table. */
     public void put(String name, Table table) {
         if (name == null || table == null) {
-            throw new IllegalArgumentException("null argument");
+            throw new IllegalArgumentException("Database.put Error: null argument");
         } 
         // replace table
         else if (tableNames_.contains(name)) {

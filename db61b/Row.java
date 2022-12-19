@@ -10,7 +10,6 @@ package db61b;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Iterator;
 
 /** A single row of a database.
  *  @author
@@ -20,6 +19,10 @@ class Row {
      *  subsequently. */
     Row(String[] data) {
         data_ = data;
+    }
+
+    Row(List<String> data) {
+        this(data.toArray(new String[data.size()]));
     }
 
     /** Given M COLUMNS that were created from a sequence of Tables
@@ -42,6 +45,7 @@ class Row {
      *  consider converting this spec to HTML using the Javadoc command.
      */
     Row(List<Column> columns, Row... rows) {
+        // construct from super columns
         data_ = new String[columns.size()];
         for (int i = 0; i < columns.size(); i++) {
             data_[i] = columns.get(i).getFrom(rows);

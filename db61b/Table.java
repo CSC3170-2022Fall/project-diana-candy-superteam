@@ -26,27 +26,59 @@ import static db61b.Utils.*;
 class Table implements Iterable<Row> {
     /** A new Table whose columns are given by COLUMNTITLES, which may
      *  not contain dupliace names. */
-    Table(String[] columnTitles) {
+    Table(String[] columnTitles, String... tableName) {
         /** check the validity of column names */
         for (int i = columnTitles.length - 1; i >= 1; i -= 1) {
             for (int j = i - 1; j >= 0; j -= 1) {
                 if (columnTitles[i].equals(columnTitles[j])) {
-                    throw error("duplicate column name: %s",
+                    throw error("Table Error: duplicate column name: %s",
                                 columnTitles[i]);
                 }
             }
         }
+
+        if (tableName.length > 0) _tableName = tableName[0];
         _columnTitles = columnTitles;
         _rows = new HashSet<Row>();
         _columns = new ArrayList<Column>();
-        for (String title : columnTitles) {
+        for (String title : _columnTitles) {
             _columns.add(new Column(title, this));
         }
     } 
 
-    /** A new Table whose columns are give by COLUMNTITLES. */
-    Table(List<String> columnTitles) {
-        this(columnTitles.toArray(new String[columnTitles.size()]));
+    /** A new Table constructed by given columns */
+    Table(List<Column> columns, String... tableName) {
+        for (int i = columns.size() - 1; i >= 1; i -= 1) {
+            for (int j = i - 1; j >= 0; j -= 1) {
+                if (columns.get(i).equals(columns.get(j))) {
+                    throw error("Table Error: duplicate column: %s",
+                                columns.get(i).getFullName());
+                }
+            }
+        }
+        
+        _columnTitles = new String[columns.size()];
+        for (int i = 0; i < columns.size(); ++i) {
+            int cnt = 0;
+            for (Column c : columns) {
+                if (columns.get(i).getName().equals(c.getName())) cnt++;
+            }
+
+            if (cnt == 1) {
+                _columnTitles[i] = columns.get(i).getName();
+            }
+            else { // count(getName) > 1 means there are duplicate names, use full name instead.
+                _columnTitles[i] = columns.get(i).getFullName();
+            }
+        }
+        if (tableName.length > 0) _tableName = tableName[0];
+        _rows = new HashSet<Row>();
+        _columns = columns;
+    }
+
+    /** Return the table name */
+    public String getName() {
+        return _tableName;
     }
 
     /** Return the column list */
@@ -59,16 +91,23 @@ class Table implements Iterable<Row> {
         return _columnTitles.length;
     }
 
+    /** Return the complate title of the Kth column */
+    public String getFullTitle(int k) {
+        if (k >= 0 && k < _columnTitles.length) return _tableName+"."+_columnTitles[k];
+        return "";
+    }
+
     /** Return the title of the Kth column.  Requires 0 <= K < columns(). */
     public String getTitle(int k) {
-        return _columnTitles[k];
+        if (k >= 0 && k < _columnTitles.length) return _columnTitles[k];
+        return "";
     }
 
     /** Return the number of the column whose title is TITLE, or -1 if
      *  there isn't one. */
     public int findColumn(String title) {
         for (int i = 0; i < _columnTitles.length; ++i) {
-            if (_columnTitles[i].equals(title)) {
+            if (getTitle(i).equals(title) || getFullTitle(i).equals(title)) {
                 return i;
             }
         }
@@ -92,6 +131,8 @@ class Table implements Iterable<Row> {
         return _rows.add(row);
     }
 
+    // !! ------------------------ Important functions ------------------------
+
     /** Read the contents of the file NAME.db, and return as a Table.
      *  Format errors in the .db file cause a DBException. */
     static Table readTable(String name) {
@@ -101,26 +142,25 @@ class Table implements Iterable<Row> {
             input = new BufferedReader(new FileReader("./testing/"+name + ".db"));
             String header = input.readLine();
             if (header == null) {
-                throw error("missing header in DB file");
+                throw error("Table Error: header missing in .db file");
             }
             String[] columnNames = header.split(",");
-            table = new Table(columnNames);
+            table = new Table(columnNames, name);
             String line;
             while ((line = input.readLine()) != null) {
-                System.out.println(line);
                 String[] values = line.split(",");
                 if (values.length != columnNames.length) {
-                    throw error("wrong number of values in DB file");
+                    throw error("Table Error: attributes number inconsistency in .db file");
                 }
                 Row row = new Row(values);
                 if (!table.add(row)) {
-                    throw error("duplicate row in DB file");
+                    throw error("Table Error: duplicate row in .db file");
                 }
             }
         } catch (FileNotFoundException e) {
             throw error("could not find %s.db", name);
         } catch (IOException e) {
-            throw error("problem reading from %s.db", name);
+            throw error("unexpected problem reading from %s.db", name);
         } finally {
             if (input != null) {
                 try {
@@ -135,6 +175,7 @@ class Table implements Iterable<Row> {
 
     /** Write the contents of TABLE into the file NAME.db. Any I/O errors
      *  cause a DBException. */
+    // ! nickname 暂时不支持（没必要，store 指令调用的一般是 insert 后的 table）
     void writeTable(String name) {
         PrintStream output = null;
         try {
@@ -158,7 +199,7 @@ class Table implements Iterable<Row> {
                 output.println();
             }
         } catch (IOException e) {
-            throw error("trouble writing to %s.db", name);
+            throw error("unexpected problem writing to %s.db", name);
         } finally {
             if (output != null) {
                 output.close();
@@ -166,23 +207,21 @@ class Table implements Iterable<Row> {
         }
     }
 
+    /** translate table to String (used for print) */
     public String toString() {
         String result = "";
-        String sep;
-        sep = "";
+        // String sep;
         for (String title : _columnTitles) {
-            result += sep;
-            result += title;
-            sep = "\t";
+            result += String.format("%1$-"+outputFormat+"s", title);
         }
+        String sepLine = "-".repeat(result.length());
         result += "\n";
+        
+        result += sepLine+"\n";
 
         for (Row row : _rows) {
-            sep = "";
             for (String value : row.getAll()) {
-                result += sep;
-                result += value;
-                sep = "\t";
+                result += String.format("%1$-"+outputFormat+"s", value);
             }
             result += "\n";
         }
@@ -191,16 +230,16 @@ class Table implements Iterable<Row> {
 
     /** Print my contents on the standard output. */
     void print() {
-        System.out.println(this);
+        System.out.print(this);
     }
 
     /** Return the cartesian product of two tables. */
     Table join(Table table2, List<Condition> conditions) {
-        List<String> columnNames = new ArrayList<>();
-        for (String title : _columnTitles)         columnNames.add(title);
-        for (String title : table2._columnTitles)  columnNames.add(title);
+        List<Column> columns = new ArrayList<Column>();
+        for (Column column : _columns)        columns.add(column);
+        for (Column column : table2._columns) columns.add(column);
 
-        Table result = new Table(columnNames);
+        Table result = new Table(columns);
         for (Row row1 : this) {
             for (Row row2 : table2) {
                 Row row = row1.join(row2);
@@ -228,8 +267,7 @@ class Table implements Iterable<Row> {
      *  rows of this table that satisfy CONDITIONS. */
     Table select(List<String> columnNames, List<Condition> conditions) {
         if (columnNames == null) { // select *
-            columnNames = Arrays.asList(_columnTitles);
-            Table result = new Table(columnNames);
+            Table result = new Table(_columns);
             for (Row row : this) {
                 if (Condition.test(conditions, row)) {
                     result.add(row);
@@ -238,10 +276,19 @@ class Table implements Iterable<Row> {
             return result;
         }
         else { // select ,
-            Table result = new Table(columnNames);
+            List<Column> columns = new ArrayList<Column>(); 
+            for (String columnName : columnNames) {
+                for (int i = 0; i < _columnTitles.length; ++i) {
+                    if (_columnTitles[i].equals(columnName)) {
+                        columns.add(_columns.get(i));
+                        break;
+                    }
+                }
+            }
+            Table result = new Table(columns);
             for (Row row : this) { // iterate over rows of this table
                 if (Condition.test(conditions, row)) {
-                    ArrayList<String> values = new ArrayList<String>();
+                    List<String> values = new ArrayList<String>();
                     for (String columnName : columnNames) {
                         int ok = 0;
                         for (int i = 0; i < _columnTitles.length; ++i) {
@@ -252,10 +299,10 @@ class Table implements Iterable<Row> {
                             }
                         }
                         if (ok == 0) {
-                            throw error("column name not found");
+                            throw error("Table.select Error: column name not found");
                         }
                     }
-                    result.add(new Row(values.toArray(new String[values.size()])));
+                    result.add(new Row(values));
                 }
             }
             return result;
@@ -267,7 +314,16 @@ class Table implements Iterable<Row> {
      *  on all columns with identical names and satisfy CONDITIONS. */
     Table select(Table table2, List<String> columnNames,
                  List<Condition> conditions) {
-        Table result = new Table(columnNames);
+        List<Column> columns = new ArrayList<Column>(); 
+        for (String columnName : columnNames) {
+            for (int i = 0; i < _columnTitles.length; ++i) {
+                if (_columnTitles[i].equals(columnName)) {
+                    columns.add(_columns.get(i));
+                    break;
+                }
+            }
+        }
+        Table result = new Table(columns);
         List<Column> common1 = new ArrayList<>();
         List<Column> common2 = new ArrayList<>();
         
@@ -289,7 +345,7 @@ class Table implements Iterable<Row> {
                             values.add(row1.get(i));
                         }
                     }
-                    result.add(new Row(values.toArray(new String[values.size()])));
+                    result.add(new Row(values));
                 }
             }
         }
@@ -316,8 +372,9 @@ class Table implements Iterable<Row> {
     }
 
     /** My rows. */
+    private int outputFormat = 12;
+    private String _tableName = null;
     private HashSet<Row> _rows;
     private String[] _columnTitles;
     private List<Column> _columns;
 }
-

@@ -167,8 +167,8 @@ class CommandInterpreter {
         _input.next("table");
         String name = name();
         Table table = tableDefinition();
-        _database.put(name, table);
         _input.next(";");
+        _database.put(name, table);
     }
 
     /** Parse and execute an exit or quit statement. Actually does nothing
@@ -200,46 +200,42 @@ class CommandInterpreter {
     /** Parse and execute a load statement from the token stream. */
     void loadStatement() {
         _input.next("load");
-        String name = _input.peek();
-        _input.next(name);
+        String name = _input.next();
         if (_database.get(name) != null) {
-            throw error("%s.db already exists", name);
+            throw error("Database Error: %s.db already exists", name);
         }
         else {
             Table table = Table.readTable(name);
-            // System.out.println(table);
             _database.put(name, table);
-            System.out.printf("Loaded %s.db%n", name);
             _input.next(";");
+            System.out.printf("Successfully load %s.db %n", name);
         }
     }
 
     /** Parse and execute a store statement from the token stream. */
     void storeStatement() {
         _input.next("store");
-        String name = _input.peek();
-        _input.next(name);
+        String name = _input.next();
         Table table = tableName();
         table.writeTable(name);
-        System.out.printf("Stored %s.db%n", name);
         _input.next(";");
+        System.out.printf("Successfully store %s.db%n", name);
     }
 
     /** Parse and execute a print statement from the token stream. */
     void printStatement() {
         _input.next("print");
         Table table = tableName();
-        // System.out.println(table);
-        System.out.println(table);
         _input.next(";");
+        System.out.print(table);
     }
 
     /** Parse and execute a select statement from the token stream. */
     void selectStatement() {
         _input.next("select"); // read column names
         Table table = selectClause();
-        System.out.println(table);
         _input.next(";");
+        System.out.print(table);
     }
 
     /** Parse and execute a table definition, returning the specified
@@ -254,7 +250,7 @@ class CommandInterpreter {
             columnNames.add(columnName());
         }
         _input.next(")");
-        table = new Table(columnNames);
+        table = new Table(columnNames.toArray(new String[columnNames.size()]));
         // }
         // else {
         //     _input.next("as");
@@ -266,44 +262,36 @@ class CommandInterpreter {
     /** Parse and execute a select clause from the token stream, returning the
      *  resulting table. */
     Table selectClause() {
-        ArrayList<String> colNames = new ArrayList<>();
-        
+        ArrayList<String> columnNames = new ArrayList<String>();
+
         if (_input.nextIf("*")) {
-            colNames = null;
+            columnNames = null;
         }
         else {
-            colNames.add(columnName());
+            columnNames.add(columnName());
             while (_input.nextIf(",")) {
-                colNames.add(columnName());
+                columnNames.add(columnName());
             }
         }
 
-        _input.next("from"); // read table names
-        List<Table> tableList = new ArrayList<Table>();
-        tableList.add(tableName());
+        _input.next("from");
+
+        List<Table> tables = new ArrayList<Table>();
+        tables.add(tableName());
         while (_input.nextIf(",")) {
-            tableList.add(tableName());
+            tables.add(tableName());
         }
 
-        List<Condition> condiList = new ArrayList<Condition>();
+        Table result = tables.get(0);
+        for (int i = 1; i < tables.size() ; ++i) {
+            result = result.join(tables.get(i), null);
+        }
+
+        List<Condition> conditionList = new ArrayList<Condition>();
         if (_input.nextIf("where")) {
-            // Table[] tableArray = (Table[]) tableList.toArray();
-            condiList = conditionClause(tableList.toArray(new Table[tableList.size()]));
+            conditionList = conditionClause(tables.toArray(new Table[tables.size()]));
         }
-
-        // filter each table with the target columns
-        List<Table> filteredList = new ArrayList<Table>();
-        for (Table table : tableList) {
-            // System.out.println(table);
-            // System.out.println(table.select(colNames, condiList));
-            filteredList.add(table.select(colNames, condiList));
-        }
-        Table resultTable = null;
-        resultTable = filteredList.get(0);
-        for (int i = 1; i < filteredList.size() ; i++) {
-            resultTable.join(filteredList.get(i), condiList);
-        }
-        return resultTable;
+        return result.select(columnNames, conditionList);
     }
 
     /** Parse and return a valid name (identifier) from the token stream. */
@@ -339,31 +327,35 @@ class CommandInterpreter {
     /** Parse and return a list of Conditions that apply to TABLES from the
      *  token stream.  This denotes the conjunction (`and') zero
      *  or more Conditions. */
+    // 这里参数 tables 仅为了 (select) 传参方便，并不规范
     ArrayList<Condition> conditionClause(Table... tables) {
-        ArrayList<Condition> condiList = new ArrayList<>();
+        ArrayList<Condition> conditionList = new ArrayList<Condition>();
 
-        condiList.add(condition(tables)); // parse the first condition
-        while (_input.peek() == "and"){ // parse the possible other condition
+        conditionList.add(condition(tables));
+        while (_input.nextIs("and")){
             _input.next("and");
-            condiList.add(condition(tables));
+            conditionList.add(condition(tables));
         }
-        _input.next(";");
-        return condiList;        // REPLACE WITH SOLUTION
+        return conditionList;
     }
 
     /** Parse and return a Condition that applies to TABLES from the
      *  token stream. */
-    // 单个 condition
+    // 生成单个 condition
     Condition condition(Table... tables) {
         String col1Name = columnName();
-        String relation = _input.next();
+        String relation;
+        if (_input.nextIs(Tokenizer.LITERAL)) {
+            relation = _input.next(Tokenizer.RELATION);
+        }
+        else {
+            throw error("Invalid relation");
+        }
         Column result1 = new Column(col1Name, tables);
-        
+
         String col2Name;
         Column result2;
-
-        // literal 也许有问题.
-        if (_input.nextIf(Tokenizer.LITERAL)) {
+        if (_input.nextIs(Tokenizer.LITERAL)) {
             col2Name = literal();
             return new Condition(result1, relation, col2Name);
         }
