@@ -14,13 +14,15 @@ class Column {
     Column(String name, Table... tables) {
         _name = name;
         int cnt = 0, index;
-        for (Table table : tables) {
-            index = table.findColumn(name);
+        for (int i = 0; i < tables.length; ++i) {
+            index = tables[i].findColumn(name);
             if (index != -1) {
                 cnt++;
-                _column = index;
-                _tableName = table.getName();
+                _tableName = tables[i].getName();
                 _fullName = _tableName + "." + _name;
+                // super column | used for getFrom (condition.java)
+                _table = i;
+                _column = index;
             }
         }
         if (cnt == 0) {
@@ -67,13 +69,12 @@ class Column {
      *  Despite the fact that many rows are passed to this function, this
      *  function returns only one value.
      */
-    // String getFrom(Row... rows) {
-    //     return rows[_table].get(_column);
-    // }
+    String getFrom(Row... rows) {
+        return rows[_table].get(_column);
+    }
 
     /** Column name denoted by THIS. */
     private String _name, _tableName, _fullName;
     /** Index of the table and column from which to extract a value. */
-    // private int _table;
-    private int _column;
+    private int _table, _column;
 }
