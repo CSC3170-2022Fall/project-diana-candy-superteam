@@ -66,12 +66,40 @@ class Row {
         return data_.clone();
     }
 
+    /** Return the join of two rows */
+    Row join(Row row) {
+        String[] data = new String[data_.length + row.data_.length];
+        for (int i = 0; i < data_.length; ++i) {
+            data[i] = data_[i];
+        }
+        for (int i = 0; i < row.data_.length; ++i) {
+            data[i + data_.length] = row.get(i);
+        }
+        return new Row(data);
+    }
+
+    /** Return the join of multiple rows */
+    Row join(Row... rows) {
+        if(rows.length == 0) {
+            return this;
+        }
+        Row result = this;
+        for (Row row : rows) {
+            result.join(row);
+        }
+        return result;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Row) {
             return Arrays.equals(data_, ((Row) obj).data_);
         }
         return false;
+    }
+
+    public String toString() {
+        return Arrays.toString(data_);
     }
 
     /* NOTE: Whenever you override the .equals() method for a class, you

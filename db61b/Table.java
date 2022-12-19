@@ -38,6 +38,10 @@ class Table implements Iterable<Row> {
         }
         _columnTitles = columnTitles;
         _rows = new HashSet<Row>();
+        _columns = new ArrayList<Column>();
+        for (String title : columnTitles) {
+            _columns.add(new Column(title, this));
+        }
     } 
 
     /** A new Table whose columns are give by COLUMNTITLES. */
@@ -45,8 +49,13 @@ class Table implements Iterable<Row> {
         this(columnTitles.toArray(new String[columnTitles.size()]));
     }
 
+    /** Return the column list */
+    public List<Column> columns() {
+        return _columns;
+    }
+
     /** Return the number of columns in this table. */
-    public int columns() {
+    public int columnSize() {
         return _columnTitles.length;
     }
 
@@ -58,7 +67,7 @@ class Table implements Iterable<Row> {
     /** Return the number of the column whose title is TITLE, or -1 if
      *  there isn't one. */
     public int findColumn(String title) {
-        for (int i = 0; i < _columnTitles.length; i++) {
+        for (int i = 0; i < _columnTitles.length; ++i) {
             if (_columnTitles[i].equals(title)) {
                 return i;
             }
@@ -86,12 +95,10 @@ class Table implements Iterable<Row> {
     /** Read the contents of the file NAME.db, and return as a Table.
      *  Format errors in the .db file cause a DBException. */
     static Table readTable(String name) {
-        BufferedReader input;
-        Table table;
-        input = null;
-        table = null;
-        try {
-            input = new BufferedReader(new FileReader(name + ".db"));
+        BufferedReader input = null;
+        Table table = null;
+        try { 
+            input = new BufferedReader(new FileReader("./testing/"+name + ".db"));
             String header = input.readLine();
             if (header == null) {
                 throw error("missing header in DB file");
@@ -100,6 +107,7 @@ class Table implements Iterable<Row> {
             table = new Table(columnNames);
             String line;
             while ((line = input.readLine()) != null) {
+                System.out.println(line);
                 String[] values = line.split(",");
                 if (values.length != columnNames.length) {
                     throw error("wrong number of values in DB file");
@@ -128,12 +136,11 @@ class Table implements Iterable<Row> {
     /** Write the contents of TABLE into the file NAME.db. Any I/O errors
      *  cause a DBException. */
     void writeTable(String name) {
-        PrintStream output;
-        output = null;
+        PrintStream output = null;
         try {
             String sep;
             sep = "";
-            output = new PrintStream(name + ".db");
+            output = new PrintStream("./testing/"+name + ".db");
             for (String title : _columnTitles) {
                 output.print(sep);
                 output.print(title);
@@ -159,34 +166,100 @@ class Table implements Iterable<Row> {
         }
     }
 
-    /** Print my contents on the standard output. */
-    void print() {
+    public String toString() {
+        String result = "";
         String sep;
         sep = "";
         for (String title : _columnTitles) {
-            System.out.print(sep);
-            System.out.print(title);
+            result += sep;
+            result += title;
             sep = "\t";
         }
-        System.out.println();
+        result += "\n";
 
         for (Row row : _rows) {
             sep = "";
             for (String value : row.getAll()) {
-                System.out.print(sep);
-                System.out.print(value);
+                result += sep;
+                result += value;
                 sep = "\t";
             }
-            System.out.println();
+            result += "\n";
         }
+        return result;
+    }
+
+    /** Print my contents on the standard output. */
+    void print() {
+        System.out.println(this);
+    }
+
+    /** Return the cartesian product of two tables. */
+    Table join(Table table2, List<Condition> conditions) {
+        List<String> columnNames = new ArrayList<>();
+        for (String title : _columnTitles)         columnNames.add(title);
+        for (String title : table2._columnTitles)  columnNames.add(title);
+
+        Table result = new Table(columnNames);
+        for (Row row1 : this) {
+            for (Row row2 : table2) {
+                Row row = row1.join(row2);
+                if (Condition.test(conditions, row)) {
+                    result.add(row);
+                }
+            }
+        }
+        return result;
+    }
+
+    /** Return the cartesian product of multiple tables. */
+    Table join(List<Table> tables, List<Condition> conditions) {
+        if (tables.size() == 0) {
+            return this;
+        }
+        Table result = this;
+        for (Table table : tables) {
+            result = result.join(table, conditions);
+        }
+        return result;
     }
 
     /** Return a new Table whose columns are COLUMNNAMES, selected from
      *  rows of this table that satisfy CONDITIONS. */
     Table select(List<String> columnNames, List<Condition> conditions) {
-        Table result = new Table(columnNames);
-        // FILL IN
-        return result;
+        if (columnNames == null) { // select *
+            columnNames = Arrays.asList(_columnTitles);
+            Table result = new Table(columnNames);
+            for (Row row : this) {
+                if (Condition.test(conditions, row)) {
+                    result.add(row);
+                }
+            }
+            return result;
+        }
+        else { // select ,
+            Table result = new Table(columnNames);
+            for (Row row : this) { // iterate over rows of this table
+                if (Condition.test(conditions, row)) {
+                    ArrayList<String> values = new ArrayList<String>();
+                    for (String columnName : columnNames) {
+                        int ok = 0;
+                        for (int i = 0; i < _columnTitles.length; ++i) {
+                            if (_columnTitles[i].equals(columnName)) {
+                                values.add(row.get(i));
+                                ok = 1;
+                                break;
+                            }
+                        }
+                        if (ok == 0) {
+                            throw error("column name not found");
+                        }
+                    }
+                    result.add(new Row(values.toArray(new String[values.size()])));
+                }
+            }
+            return result;
+        }
     }
 
     /** Return a new Table whose columns are COLUMNNAMES, selected
@@ -195,7 +268,31 @@ class Table implements Iterable<Row> {
     Table select(Table table2, List<String> columnNames,
                  List<Condition> conditions) {
         Table result = new Table(columnNames);
-        // FILL IN
+        List<Column> common1 = new ArrayList<>();
+        List<Column> common2 = new ArrayList<>();
+        
+        for (Column c1 : this.columns()) {
+            for (Column c2 : table2.columns()) {
+                if (c1.getName().equals(c2.getName())) {
+                    common1.add(c1);
+                    common2.add(c2);
+                }
+            }
+        }
+
+        for (Row row1 : this) {
+            for (Row row2 : table2) {
+                if (equijoin(common1, common2, row1, row2) && Condition.test(conditions, row1, row2)) {
+                    ArrayList<String> values = new ArrayList<String>();
+                    for (int i = 0; i < _columnTitles.length; ++i) {
+                        if (columnNames.contains(_columnTitles[i])) {
+                            values.add(row1.get(i));
+                        }
+                    }
+                    result.add(new Row(values.toArray(new String[values.size()])));
+                }
+            }
+        }
         return result;
     }
 
@@ -219,7 +316,8 @@ class Table implements Iterable<Row> {
     }
 
     /** My rows. */
-    private HashSet<Row> _rows = new HashSet<>();
+    private HashSet<Row> _rows;
     private String[] _columnTitles;
+    private List<Column> _columns;
 }
 
