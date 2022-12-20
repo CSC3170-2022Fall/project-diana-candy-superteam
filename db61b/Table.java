@@ -13,7 +13,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -233,8 +232,12 @@ class Table implements Iterable<Row> {
         System.out.print(this);
     }
 
+    Table innerjoin(Table table2) {
+        return this;
+    }
+
     /** Return the cartesian product of two tables. */
-    Table join(Table table2, List<Condition> conditions) {
+    Table join(Table table2) {
         List<Column> columns = new ArrayList<Column>();
         for (Column column : _columns)        columns.add(column);
         for (Column column : table2._columns) columns.add(column);
@@ -242,23 +245,20 @@ class Table implements Iterable<Row> {
         Table result = new Table(columns);
         for (Row row1 : this) {
             for (Row row2 : table2) {
-                Row row = row1.join(row2);
-                if (Condition.test(conditions, row)) {
-                    result.add(row);
-                }
+                result.add(row1.join(row2));
             }
         }
         return result;
     }
 
     /** Return the cartesian product of multiple tables. */
-    Table join(List<Table> tables, List<Condition> conditions) {
+    Table join(List<Table> tables) {
         if (tables.size() == 0) {
             return this;
         }
         Table result = this;
         for (Table table : tables) {
-            result = result.join(table, conditions);
+            result = result.join(table);
         }
         return result;
     }

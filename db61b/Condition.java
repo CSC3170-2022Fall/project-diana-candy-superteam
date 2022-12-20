@@ -18,7 +18,6 @@ class Condition {
      *  are column designators. and RELATION is one of the
      *  strings "<", ">", "<=", ">=", "=", or "!=". */
     Condition(Column col1, String relation, Column col2) {
-        // YOUR CODE HERE
         _col1 = col1;
         _rel = relation;
         _col2 = col2;
@@ -30,7 +29,8 @@ class Condition {
      *  ">=", "=", or "!=".
      */
     Condition(Column col1, String relation, String val2) {
-        this(col1, relation, (Column) null);
+        _col1 = col1;
+        _rel = relation;
         _val2 = val2;
     }
 
@@ -41,135 +41,111 @@ class Condition {
     // only allows non-numeric type when check equility or inequility.
     // attempts applying >,<,>=,<= between non-numeric types will throw errors.
     boolean test(Row... rows) {
-        // REPLACE WITH SOLUTION
-        switch(_rel){
-            case "<": // Any x < y iff !(Exist x >= y)
-                try{
-                    if(_col2 != null){
-                        for(Row r: rows){
-                            if(Double.valueOf(_col1.getFrom(r)) >= Double.valueOf(_col2.getFrom(r))){ // negate
-                                return false;
-                            }
+        switch(_rel) {
+            case "<" : // Any x < y iff !(Exist x >= y)
+                try {
+                    if(_col2 != null) {
+                        for(Row r: rows) {
+                            if(Double.valueOf(_col1.getFrom(r)) >= Double.valueOf(_col2.getFrom(r))) return false;
                         }
                     } else {
-                        for(Row r: rows){
-                            if(Double.valueOf(_col1.getFrom(r)) >= Double.valueOf(_val2)){ // negate
-                                return false;
-                            }
+                        for(Row r: rows) {
+                            if(Double.valueOf(_col1.getFrom(r)) >= Double.valueOf(_val2)) return false;
                         }
                     }
-                } catch (NumberFormatException e){
-                    throw error("Exception: Unsupported comparison between non-numeric type");
+                } catch (NumberFormatException e) {
+                    throw error("Exception: Invalid comparison between non-numeric type");
                 }
                 return true;
-            case ">": // Any x > y iff !(Exist x <= y)
-                try{
-                    if(_col2 != null){
-                        for(Row r: rows){
-                            if(Double.valueOf(_col1.getFrom(r)) <= Double.valueOf(_col2.getFrom(r))){ // negate
-                                return false;
-                            }
+            case ">" : // Any x > y iff !(Exist x <= y)
+                try {
+                    if(_col2 != null) {
+                        for(Row r: rows) {
+                            if(Double.valueOf(_col1.getFrom(r)) <= Double.valueOf(_col2.getFrom(r))) return false;
                         }
                     } else {
-                        for(Row r: rows){
+                        for(Row r: rows) {
                             if(Double.valueOf(_col1.getFrom(r)) <= Double.valueOf(_val2)){ // negate
                                 return false;
                             }
                         }
                     }
-                } catch (NumberFormatException e){
+                } catch (NumberFormatException e) {
                     throw error("Exception: Unsupported comparison between non-numeric type");
                 }
                 return true;
-            case "<=": // Any x <= y iff !(Exist x > y)
-                try{
-                    if(_col2 != null){
-                        for(Row r: rows){
-                            if(Double.valueOf(_col1.getFrom(r)) > Double.valueOf(_col2.getFrom(r))){ // negate
-                                return false;
-                            }
+            case "<=" : // Any x <= y iff !(Exist x > y)
+                try {
+                    if(_col2 != null) {
+                        for(Row r: rows) {
+                            if(Double.valueOf(_col1.getFrom(r)) > Double.valueOf(_col2.getFrom(r))) return false;
                         }
                     } else {
-                        for(Row r: rows){
-                            if(Double.valueOf(_col1.getFrom(r)) > Double.valueOf(_val2)){ // negate
-                                return false;
-                            }
+                        for(Row r: rows) {
+                            if(Double.valueOf(_col1.getFrom(r)) > Double.valueOf(_val2)) return false;
+                        }
+                    }
+                } catch (NumberFormatException e) {
+                    throw error("Exception: Unsupported comparison between non-numeric type");
+                }
+                return true;
+            case ">=" : // Any x >= y iff !(Exist x < y)
+                try {
+                    if(_col2 != null) {
+                        for(Row r: rows) {
+                            if(Double.valueOf(_col1.getFrom(r)) < Double.valueOf(_col2.getFrom(r))) return false;
+                        }
+                    } else {
+                        for(Row r: rows) {
+                            if(Double.valueOf(_col1.getFrom(r)) < Double.valueOf(_val2)) return false;
                         }
                     }
                 } catch (NumberFormatException e){
                     throw error("Exception: Unsupported comparison between non-numeric type");
                 }
                 return true;
-            case ">=": // Any x >= y iff !(Exist x < y)
-                try{
-                    if(_col2 != null){
-                        for(Row r: rows){
-                            if(Double.valueOf(_col1.getFrom(r)) < Double.valueOf(_col2.getFrom(r))){ // negate
-                                return false;
-                            }
-                        }
-                    } else {
-                        for(Row r: rows){
-                            if(Double.valueOf(_col1.getFrom(r)) < Double.valueOf(_val2)){ // negate
-                                return false;
-                            }
-                        }
-                    }
-                } catch (NumberFormatException e){
-                    throw error("Exception: Unsupported comparison between non-numeric type");
-                }
-                return true;
-            case "=": // Any x == y iff !(Exist x != y)
-                if(_col2 != null){
-                    for(Row r: rows){
-                        if(!(_col1.getFrom(r)).equals(_col2.getFrom(r))){ // negate
-                            return false;
-                        }
+            case "=" : // Any x == y iff !(Exist x != y)
+                if(_col2 != null) {
+                    for(Row r: rows) {
+                        if(!(_col1.getFrom(r)).equals(_col2.getFrom(r))) return false;
                     }
                 } else {
                     for(Row r: rows){
-                        if(!(_col1.getFrom(r)).equals(_val2)){ // negate
-                            return false;
-                        }
+                        if(!(_col1.getFrom(r)).equals(_val2)) return false;
                     }
                 }
                 return true;
-            case "!=": // Any x != y iff !(Exist x == y)
-                if(_col2 != null){
-                    for(Row r: rows){
-                        if((_col1.getFrom(r)).equals(_col2.getFrom(r))){ // negate
-                            return false;
-                        }
+            case "!=" : // Any x != y iff !(Exist x == y)
+                if(_col2 != null) {
+                    for(Row r: rows) {
+                        if((_col1.getFrom(r)).equals(_col2.getFrom(r))) return false;
                     }
                 } else {
-                    for(Row r: rows){
-                        if((_col1.getFrom(r)).equals(_val2)){ // negate
-                            return false;
-                        }
+                    for(Row r: rows) {
+                        if((_col1.getFrom(r)).equals(_val2)) return false;
                     }
                 }
                 return true;
             default:
-                throw error("Exception: Unknown Relation: %s", _rel);
+                throw error("Exception: Unknown Relation: %s%n", _rel);
         }
     }
 
     /** Return true iff ROWS satisfies all CONDITIONS. */
     static boolean test(List<Condition> conditions, Row... rows) {
+        if (conditions == null) return true;
+
         for (Condition cond : conditions) {
-            if (!cond.test(rows)) {
-                return false;
-            }
+            if (!cond.test(rows)) return false;
         }
         return true;
     }
 
     /** The operands of this condition.  _col2 is null if the second operand
      *  is a literal. */
-    private Column _col1, _col2;
+    private Column _col1, _col2 = null;
     /** Second operand, if literal (otherwise null). */
-    private String _val2;
-    // ADD ADDITIONAL FIELDS HERE
+    private String _val2 = null;
     /* This represents the relation */
     private String _rel;
 }

@@ -276,22 +276,28 @@ class CommandInterpreter {
 
         _input.next("from");
 
+        Table result;
         List<Table> tables = new ArrayList<Table>();
         tables.add(tableName());
-        while (_input.nextIf(",")) {
-            tables.add(tableName());
-        }
+        result = tables.get(0);
+        while (_input.nextIf(",") || _input.nextIf("inner")) {
+            Table table = tableName();
 
-        Table result = tables.get(0);
-        for (int i = 1; i < tables.size() ; ++i) {
-            result = result.join(tables.get(i), null);
+            if (_input.nextIf("join")) {
+                result = result.innerjoin(table);
+            }
+            else {
+                result = result.join(table);
+            }
+            tables.add(table);
         }
 
         List<Condition> conditionList = new ArrayList<Condition>();
         if (_input.nextIf("where")) {
             conditionList = conditionClause(tables.toArray(new Table[tables.size()]));
         }
-        return result.select(columnNames, conditionList);
+        result = result.select(columnNames, conditionList);
+        return result;
     }
 
     /** Parse and return a valid name (identifier) from the token stream. */
@@ -332,8 +338,7 @@ class CommandInterpreter {
         ArrayList<Condition> conditionList = new ArrayList<Condition>();
 
         conditionList.add(condition(tables));
-        while (_input.nextIs("and")){
-            _input.next("and");
+        while (_input.nextIf("and")) {
             conditionList.add(condition(tables));
         }
         return conditionList;
@@ -344,24 +349,21 @@ class CommandInterpreter {
     // 生成单个 condition
     Condition condition(Table... tables) {
         String col1Name = columnName();
+        Column result1 = new Column(col1Name, tables);
         String relation;
-        if (_input.nextIs(Tokenizer.LITERAL)) {
-            relation = _input.next(Tokenizer.RELATION);
+        if (_input.nextIs(Tokenizer.RELATION)) {
+            relation = _input.next();
         }
         else {
             throw error("Invalid relation");
         }
-        Column result1 = new Column(col1Name, tables);
 
-        String col2Name;
-        Column result2;
         if (_input.nextIs(Tokenizer.LITERAL)) {
-            col2Name = literal();
-            return new Condition(result1, relation, col2Name);
+            String literal = literal();
+            return new Condition(result1, relation, literal);
         }
         else {
-            col2Name = columnName();
-            result2 = new Column(col2Name, tables);
+            Column result2 = new Column(columnName(), tables);
             return new Condition(result1, relation, result2);
         }
     }

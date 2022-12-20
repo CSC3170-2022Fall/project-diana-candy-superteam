@@ -44,13 +44,13 @@ class Row {
      *  potentially clickable link it is! Just not in source. You might
      *  consider converting this spec to HTML using the Javadoc command.
      */
-    Row(List<Column> columns, Row... rows) {
-        // construct from super columns
-        data_ = new String[columns.size()];
-        for (int i = 0; i < columns.size(); i++) {
-            data_[i] = columns.get(i).getFrom(rows);
-        }
-    }
+    // Row(List<Column> columns, Row... rows) {
+    //     // construct from super columns
+    //     data_ = new String[columns.size()];
+    //     for (int i = 0; i < columns.size(); i++) {
+    //         data_[i] = columns.get(i).getFrom(rows);
+    //     }
+    // }
 
     /** Return my number of columns. */
     int size() {
@@ -59,10 +59,8 @@ class Row {
 
     /** Return the value of my Kth column.  Requires that 0 <= K < size(). */
     String get(int k) {
-        if (0 <= k && k < size()) {
-            return data_[k];
-        }
-        return "";
+        if (0 <= k && k < size()) return data_[k];
+        else return "";
     }
 
     /** Returen the value of all data */
