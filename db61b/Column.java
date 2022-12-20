@@ -19,7 +19,7 @@ class Column {
             if (index != -1) {
                 cnt++;
                 _tableName = tables[i].getName();
-                _fullName = _tableName + "." + _name;
+                _fullName = _tableName + "_" + _name;
                 // super column | used for getFrom (condition.java)
                 _table = i;
                 _column = index;
