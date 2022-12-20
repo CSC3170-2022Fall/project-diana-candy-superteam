@@ -92,7 +92,7 @@ class Table implements Iterable<Row> {
 
     /** Return the complate title of the Kth column */
     public String getFullTitle(int k) {
-        if (k >= 0 && k < _columnTitles.length) return _tableName+"."+_columnTitles[k];
+        if (k >= 0 && k < _columnTitles.length) return _tableName+"_"+_columnTitles[k];
         return "";
     }
 
@@ -232,7 +232,15 @@ class Table implements Iterable<Row> {
         System.out.print(this);
     }
 
+    Table commonColumns(Table table2) {
+        return this;
+    }
+
     Table innerjoin(Table table2) {
+        return this;
+    }
+
+    Table innerjoin_residual(Table table2) {
         return this;
     }
 

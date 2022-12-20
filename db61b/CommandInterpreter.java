@@ -281,15 +281,17 @@ class CommandInterpreter {
         tables.add(tableName());
         result = tables.get(0);
         while (_input.nextIf(",") || _input.nextIf("inner")) {
-            Table table = tableName();
+            Table table = tableName(), table_;
 
             if (_input.nextIf("join")) {
+                table_ = result.innerjoin_residual(table);
                 result = result.innerjoin(table);
             }
             else {
+                table_ = table;
                 result = result.join(table);
             }
-            tables.add(table);
+            tables.add(table_);
         }
 
         List<Condition> conditionList = new ArrayList<Condition>();
