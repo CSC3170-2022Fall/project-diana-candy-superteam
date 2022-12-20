@@ -54,8 +54,7 @@ Our project mainly focuses on the `Command Interpreter` module and database stru
 
 ## 🏅Achievement Display
 
-![achievement1](https://user-images.githubusercontent.com/34508318/208705916-8899be87-6466-44c9-af95-916d93f09cfe.png)
-![achievement2](https://user-images.githubusercontent.com/34508318/208706067-87d3917b-763c-4461-91cd-025f150fbf47.png)
+![achievement](https://user-images.githubusercontent.com/34508318/208721246-1d4b5342-ab5a-45b7-a302-8964ff9e3a15.png)
 
 ## 💭Design Thoughts
 
