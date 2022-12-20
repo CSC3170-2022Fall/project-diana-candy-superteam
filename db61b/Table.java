@@ -43,7 +43,7 @@ class Table implements Iterable<Row> {
         for (String title : _columnTitles) {
             _columns.add(new Column(title, this));
         }
-    } 
+    }
 
     /** A new Table constructed by given columns */
     Table(List<Column> columns, String... tableName) {
@@ -132,6 +132,15 @@ class Table implements Iterable<Row> {
 
     // !! ------------------------ Important functions ------------------------
 
+    /** Return a standard table from this temporary table */
+    // Note: a temporary table is a table that is created by a select statement
+    //       and its _tableName is null.
+    Table enhance(String tableName) {
+        Table result = new Table(_columnTitles, tableName);
+        for (Row r : _rows) result.add(r);
+        return result;
+    }
+
     /** Read the contents of the file NAME.db, and return as a Table.
      *  Format errors in the .db file cause a DBException. */
     static Table readTable(String name) {
@@ -175,12 +184,12 @@ class Table implements Iterable<Row> {
     /** Write the contents of TABLE into the file NAME.db. Any I/O errors
      *  cause a DBException. */
     // ! nickname 暂时不支持（没必要，store 指令调用的一般是 insert 后的 table）
-    void writeTable(String name) {
+    void writeTable() {
         PrintStream output = null;
         try {
             String sep;
             sep = "";
-            output = new PrintStream("./testing/"+name + ".db");
+            output = new PrintStream("./testing/"+_tableName + ".db");
             for (String title : _columnTitles) {
                 output.print(sep);
                 output.print(title);
@@ -198,7 +207,7 @@ class Table implements Iterable<Row> {
                 output.println();
             }
         } catch (IOException e) {
-            throw error("unexpected problem writing to %s.db", name);
+            throw error("unexpected problem writing to %s.db", _tableName);
         } finally {
             if (output != null) {
                 output.close();
@@ -210,8 +219,17 @@ class Table implements Iterable<Row> {
     public String toString() {
         String result = "";
         // String sep;
-        for (String title : _columnTitles) {
-            result += String.format("%1$-"+outputFormat+"s", title);
+        int[] columnWidth = new int[_columnTitles.length];
+        for (int i = 0; i < _columnTitles.length; ++i) {
+            columnWidth[i] = _columnTitles[i].length();
+            for (Row row : _rows) {
+                columnWidth[i] = Math.max(columnWidth[i], row.get(i).length());
+            }
+            columnWidth[i] += outputFormat;
+        }
+
+        for (int i = 0; i < _columnTitles.length; ++i) {
+            result += String.format("%1$-"+columnWidth[i]+"s", _columnTitles[i]);
         }
         String sepLine = "-".repeat(result.length());
         result += "\n";
@@ -219,8 +237,9 @@ class Table implements Iterable<Row> {
         result += sepLine+"\n";
 
         for (Row row : _rows) {
-            for (String value : row.getAll()) {
-                result += String.format("%1$-"+outputFormat+"s", value);
+            String[] values = row.getAll();
+            for (int i = 0; i < _columnTitles.length; ++i) {
+                result += String.format("%1$-"+columnWidth[i]+"s", values[i]);
             }
             result += "\n";
         }
@@ -380,7 +399,7 @@ class Table implements Iterable<Row> {
     }
 
     /** My rows. */
-    private int outputFormat = 12;
+    private int outputFormat = 1;
     private String _tableName = null;
     private HashSet<Row> _rows;
     private String[] _columnTitles;
