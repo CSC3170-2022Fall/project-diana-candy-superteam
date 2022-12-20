@@ -14,8 +14,6 @@ This is our implementation for the course project of CSC3170, 2022 Fall, CUHK(SZ
 
 Our team consists of the following members, listed in the table below (the team leader is shown in the first row, and is marked with 🚩 behind his/her name):
 
-<!-- change the info below to be the real case -->
-
 | Student ID | Student Name | GitHub Account (in Email) | GitHub UserName |
 | ---------- | ------------ | ------------------------- | --------------- |
 | 119020401  | 王嘉茗 🚩     | 119020401@link.cuhk.edu.cn| @[Jiuma141](https://github.com/Jiuma141) |
@@ -28,21 +26,21 @@ Our team consists of the following members, listed in the table below (the team 
 
 ## Project Specification
 
-<!-- You should remove the terms/sentence that is not necessary considering your option/branch/difficulty choice -->
-
 After thorough discussion, our team made the choice and the specification information is listed below:
 
 - Our option choice is: **Option 3**
 - Our branch choice is: **Not applied**
 - The difficulty level is: **Not applied**
 
-## Project Description
+---
+
+## 📖Project Description
 
 > This project involves writing a miniature relational database management system (DBMS) that stores tables of data, where a table consists of some number of labeled columns of information. Our system will include a very simple query language for extracting information from these tables. For the purposes of this project, we will deal only with very small databases, and therefore will not consider speed and efficiency at all.
 
 **Full description:** https://inst.eecs.berkeley.edu/~cs61b/fa14/hw/proj1.pdf
 
-## Project Abstract
+## 📝Project Abstract
 
 ![project_description](https://user-images.githubusercontent.com/34508318/205655270-b90103a7-7664-4879-9aa8-5bd52fde1c8e.png)
 
@@ -54,12 +52,12 @@ Our project mainly focuses on the `Command Interpreter` module and database stru
 
 **Project codes:** https://github.com/CSC3170-2022Fall/project-diana-candy-superteam/tree/db61b
 
-## Achievement Display
+## 🏅Achievement Display
 
 ![achievement1](https://user-images.githubusercontent.com/34508318/208705916-8899be87-6466-44c9-af95-916d93f09cfe.png)
 ![achievement2](https://user-images.githubusercontent.com/34508318/208706067-87d3917b-763c-4461-91cd-025f150fbf47.png)
 
-## Design Thoughts
+## 💭Design Thoughts
 
 ### Table
 
@@ -94,11 +92,11 @@ We just fill out the framework provided by this project.
 
 The simpliest unit records all data in String type. We just fill out the framework provided by this project.
 
-## Timeline
+## ⏰Timeline
 
 ![timeline](https://user-images.githubusercontent.com/34508318/208706704-f913784b-2cbc-4bc6-a5a0-66aef1e83b84.png)
 
-## Highlights
+## 🌟Highlights
 
 In addition to the features mentioned in the design idea, we also made optimization in these aspects:
 
@@ -107,11 +105,13 @@ In addition to the features mentioned in the design idea, we also made optimizat
 3. `Column(String name, Table... tables)`: If the length of tables = 1, we are constructing a database table. Otherwise, we are constructing a super column. (robustness)
 4. `Colume._offset`: use offset in super columns to derive the data after cartesian product.
 
-## \*Optional Work
+## 📍\*Optional Work
 
-### Notion Pamphlet (manual)
+### 📘Notion Pamphlet (manual)
 
 [![](https://user-images.githubusercontent.com/34508318/208715834-2e7e927f-c519-4191-a729-dc88dc10c12e.png)](https://magic-chair-572.notion.site/CSC3170-Project-Pamphlet-c0cbaadee8814760a55b3a1eef0328b3)
+
+More details: https://magic-chair-572.notion.site/CSC3170-Project-Pamphlet-c0cbaadee8814760a55b3a1eef0328b3
 
 ### \[Option4\] CMU 15-445/645, Fall 2021: Database Systems
 
