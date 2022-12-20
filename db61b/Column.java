@@ -23,7 +23,10 @@ class Column {
                 // super column | used for getFrom (condition.java)
                 _table = i;
                 _column = index;
+                _offset += _column;
+                return ;
             }
+            _offset += tables[i].columnSize();
         }
         if (cnt == 0) {
             throw error("Column Error: unknown column: %s", name);
@@ -69,12 +72,12 @@ class Column {
      *  Despite the fact that many rows are passed to this function, this
      *  function returns only one value.
      */
-    String getFrom(Row... rows) {
-        return rows[_table].get(_column);
+    String getFrom(Row row) {
+        return row.get(_offset);
     }
 
     /** Column name denoted by THIS. */
     private String _name, _tableName, _fullName;
     /** Index of the table and column from which to extract a value. */
-    private int _table, _column;
+    private int _table, _column, _offset;
 }
