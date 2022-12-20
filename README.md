@@ -49,18 +49,69 @@ After thorough discussion, our team made the choice and the specification inform
 Our project mainly focuses on the `Command Interpreter` module and database structures of database system. It will basically support these functions:
 
 - Interprete SQL language.
-- Support the basic structures of database system (e.g. database file, table, row, column).
-- Do fundamental queries on database system, including `select`, `from`, `where` clauses.
+- Support the basic structures of database system (e.g. database files, tables, rows, columns).
+- Do fundamental queries on database system, including `select`, `from`, `where`, `insert into`, `create table` clauses.
 
 **Project codes:** https://github.com/CSC3170-2022Fall/project-diana-candy-superteam/tree/db61b
 
-## [Notion Pamphlet](https://magic-chair-572.notion.site/CSC3170-Project-Pamphlet-c0cbaadee8814760a55b3a1eef0328b3)
+## Achievement Display
+
+![achievement1](https://user-images.githubusercontent.com/34508318/208705916-8899be87-6466-44c9-af95-916d93f09cfe.png)
+![achievement2](https://user-images.githubusercontent.com/34508318/208706067-87d3917b-763c-4461-91cd-025f150fbf47.png)
+
+## Design Thoughts
+
+### Table
+
+We consider `Column` to be an important attribute in the Table，and it is only constructed when the database loads `.db` files or excutes `create` clause (for convenience, we call these tables `database tables`, which are stored directory in heap). namely, the `Column` is constructed at the same time as the `initial table`.
+
+> Idea: the columns of a new table obtained by the `select clause` is a subset of the `database tables`. (We define a `temporary table` is a table created by a `select clause`, otherwise `standard table`. More specifically, the temporary table is one without explicit name)
+
+To maintain this property, the Table should support two ways of construction:
+
+1. Table(String[] columnTitles), used for `standard table`. (The columns are initialized by string array)
+2. Table(List<Column> columns), used for `temporary table`. (The table borrows columns from the table in database)
+
+By emphasizing the importance of `Column`, the role of `_columnTitles` (type: String[]) is diminished. We'll just use them as column titles to display to the user.
+
+### Column
+
+To reinforce the importance of the column, the `Column` class needs to record:
+
+1. it belongs to which table,
+2. its name,
+3. the full name (`tableName_columnName`）
+
+With item 3, we can solve the problem of attribute name dupilication.
+
+> To supprt condition filering, we need to know where the rows in the table after cartesian product come from which table in `from clause`. We define a `super column` having the attribute of `offset`, which records the offset in the ultimate columns after cartesian product. Specifically, the `offset` attribute is derived when we do table join (cartesian product).
+
+### Condition
+
+We just fill out the framework provided by this project.
+
+### Row
+
+The simpliest unit records all data in String type. We just fill out the framework provided by this project.
 
 ## Timeline
 
-<!--Todo-->
+![timeline](https://user-images.githubusercontent.com/34508318/208706704-f913784b-2cbc-4bc6-a5a0-66aef1e83b84.png)
+
+## Highlights
+
+In addition to the features mentioned in the design idea, we also made optimization in these aspects:
+
+1. `Table.toString`: print table with adaptive adjustment.
+2. `Table.select(List<String> columnNames, List<Condition> conditions)`: supports column names and conditions filtering, and we increase the robustness of the function.
+3. `Column(String name, Table... tables)`: If the length of tables = 1, we are constructing a database table. Otherwise, we are constructing a super column. (robustness)
+4. `Colume._offset`: use offset in super columns to derive the data after cartesian product.
 
 ## \*Optional Work
+
+### Notion Pamphlet (manual)
+
+[![](https://user-images.githubusercontent.com/34508318/208715834-2e7e927f-c519-4191-a729-dc88dc10c12e.png)](https://magic-chair-572.notion.site/CSC3170-Project-Pamphlet-c0cbaadee8814760a55b3a1eef0328b3)
 
 ### \[Option4\] CMU 15-445/645, Fall 2021: Database Systems
 
@@ -69,12 +120,10 @@ Our project mainly focuses on the `Command Interpreter` module and database stru
     - [x] [Buffer Pool Manager Instance](https://15445.courses.cs.cmu.edu/fall2021/project1/#buffer-pool-instance)
     - [x] [Parallel Buffer Pool Manager](https://15445.courses.cs.cmu.edu/fall2021/project1/#parallel-buffer-pool)
 - [ ] Lab 2: Hash Index
-
     - [ ] [Page Layouts](https://15445.courses.cs.cmu.edu/fall2021/project2/#task1)
     - [ ] [Extendible Hashing Implementation](https://15445.courses.cs.cmu.edu/fall2021/project2/#task2)
     - [ ] [Concurrency Control](https://15445.courses.cs.cmu.edu/fall2021/project2/#task3)
 - [ ] Lab 3: Query Execution
-
     - [ ] [Executors](https://15445.courses.cs.cmu.edu/fall2021/project3/)
 - [ ] Lab 4: Concurrency Control
     - [x] [Lock Manager](https://15445.courses.cs.cmu.edu/fall2021/project4/#lock_manager)
@@ -85,4 +134,4 @@ Our project mainly focuses on the `Command Interpreter` module and database stru
 
 ### Result from Autograder
 
-[Lab 1-result](https://cdn.zmatt.cn/img/archived/github/result-cmu15445-lab1.png)
+[Lab 1 result](https://cdn.zmatt.cn/img/archived/github/result-cmu15445-lab1.png)
