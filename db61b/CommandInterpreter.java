@@ -165,10 +165,10 @@ class CommandInterpreter {
     void createStatement() {
         _input.next("create");
         _input.next("table");
-        String name = name();
-        Table table = tableDefinition();
+        String tableName = name();
+        Table table = tableDefinition(tableName);
         _input.next(";");
-        _database.put(name, table);
+        _database.put(tableName, table);
     }
 
     /** Parse and execute an exit or quit statement. Actually does nothing
@@ -216,11 +216,10 @@ class CommandInterpreter {
     /** Parse and execute a store statement from the token stream. */
     void storeStatement() {
         _input.next("store");
-        String name = _input.next();
         Table table = tableName();
-        table.writeTable(name);
+        table.writeTable();
         _input.next(";");
-        System.out.printf("Successfully store %s.db%n", name);
+        System.out.printf("Successfully store %s.db%n", table.getName());
     }
 
     /** Parse and execute a print statement from the token stream. */
@@ -241,22 +240,25 @@ class CommandInterpreter {
 
     /** Parse and execute a table definition, returning the specified
      *  table. */
-    Table tableDefinition() {
-        Table table = null;
-        // 先不管 as 了
-        // if (_input.nextIf("(")) {
-        ArrayList<String> columnNames = new ArrayList<String>();
-        columnNames.add(columnName());
-        while (_input.nextIf(",")) {
+    Table tableDefinition(String tableName) {
+        Table table;
+        if (_input.nextIf("(")) {
+            List<String> columnNames = new ArrayList<String>();
             columnNames.add(columnName());
+            while (_input.nextIf(",")) {
+                columnNames.add(columnName());
+            }
+            _input.next(")");
+            table = new Table(columnNames.toArray(new String[columnNames.size()]), tableName);
         }
-        _input.next(")");
-        table = new Table(columnNames.toArray(new String[columnNames.size()]));
-        // }
-        // else {
-        //     _input.next("as");
-        //     table = selectClause();
-        // }
+        else if (_input.nextIf("as")) {
+            _input.next("select");
+            table = selectClause();
+            table = table.enhance(tableName);
+        }
+        else {
+            throw error("unrecognizable table definition");
+        }
         return table;
     }
 
