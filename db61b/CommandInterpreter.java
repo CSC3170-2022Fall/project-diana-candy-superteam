@@ -186,14 +186,15 @@ class CommandInterpreter {
         _input.next("into");
         Table table = tableName();
         _input.next("values");
+        _input.next("(");
 
-        ArrayList<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<String>();
         values.add(literal());
         while (_input.nextIf(",")) {
             values.add(literal());
         }
-
-        table.add(new Row(values.toArray(new String[values.size()])));
+        _input.next(")");
+        table.add(new Row(values));
         _input.next(";");
     }
 
