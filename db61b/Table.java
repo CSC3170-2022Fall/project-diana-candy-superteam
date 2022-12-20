@@ -210,8 +210,17 @@ class Table implements Iterable<Row> {
     public String toString() {
         String result = "";
         // String sep;
-        for (String title : _columnTitles) {
-            result += String.format("%1$-"+outputFormat+"s", title);
+        int[] columnWidth = new int[_columnTitles.length];
+        for (int i = 0; i < _columnTitles.length; ++i) {
+            columnWidth[i] = _columnTitles[i].length();
+            for (Row row : _rows) {
+                columnWidth[i] = Math.max(columnWidth[i], row.get(i).length());
+            }
+            columnWidth[i] += outputFormat;
+        }
+
+        for (int i = 0; i < _columnTitles.length; ++i) {
+            result += String.format("%1$-"+columnWidth[i]+"s", _columnTitles[i]);
         }
         String sepLine = "-".repeat(result.length());
         result += "\n";
@@ -219,8 +228,9 @@ class Table implements Iterable<Row> {
         result += sepLine+"\n";
 
         for (Row row : _rows) {
-            for (String value : row.getAll()) {
-                result += String.format("%1$-"+outputFormat+"s", value);
+            String[] values = row.getAll();
+            for (int i = 0; i < _columnTitles.length; ++i) {
+                result += String.format("%1$-"+columnWidth[i]+"s", values[i]);
             }
             result += "\n";
         }
@@ -380,7 +390,7 @@ class Table implements Iterable<Row> {
     }
 
     /** My rows. */
-    private int outputFormat = 12;
+    private int outputFormat = 1;
     private String _tableName = null;
     private HashSet<Row> _rows;
     private String[] _columnTitles;
