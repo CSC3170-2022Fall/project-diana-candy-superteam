@@ -60,7 +60,7 @@ Our project mainly focuses on the `Command Interpreter` module and database stru
 
 ### Table
 
-We consider `Column` to be an important attribute in the Table，and it is only constructed when the database loads `.db` files or excutes `create` clause (for convenience, we call these tables `database tables`, which are stored directory in heap). namely, the `Column` is constructed at the same time as the `initial table`.
+We consider `Column` to be an important attribute in the Table，and it is only constructed when the database loads `.db` files or executes `create` clause (for convenience, we call these tables `database tables`, which are stored directory in heap). namely, the `Column` is constructed at the same time as the `initial table`.
 
 > Idea: the columns of a new table obtained by the `select clause` is a subset of the `database tables`. (We define a `temporary table` is a table created by a `select clause`, otherwise `standard table`. More specifically, the temporary table is one without explicit name)
 
