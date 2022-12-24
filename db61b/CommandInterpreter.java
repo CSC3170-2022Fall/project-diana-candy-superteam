@@ -209,7 +209,7 @@ class CommandInterpreter {
             Table table = Table.readTable(name);
             _database.put(name, table);
             _input.next(";");
-            System.out.printf("Successfully load %s.db %n", name);
+            System.out.printf("Successfully loaded %s.db %n", name);
         }
     }
 
