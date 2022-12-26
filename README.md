@@ -58,6 +58,10 @@ Our project mainly focuses on the `Command Interpreter` module and database stru
 
 ## 💭Design Thoughts
 
+### Database
+
+The class that handles table instances. Specifically, the database class supports operations to store, retrieve, and delete tables. We utilize two ArrayList to store table instances and table names.
+
 ### Table
 
 We consider `Column` to be an important attribute in the Table，and it is only constructed when the database loads `.db` files or executes `create` clause (for convenience, we call these tables `database tables`, which are stored directory in heap). namely, the `Column` is constructed at the same time as the `initial table`.
