@@ -112,6 +112,10 @@ In addition to the features mentioned in the design idea, we also made optimizat
 
 [![](https://user-images.githubusercontent.com/34508318/209759625-98b32ebc-4e96-4b59-8229-edd329dcf70e.png)](https://www.bilibili.com/video/BV1wD4y1j7jP)
 
+## Report (pdf version)
+
+[CSC3170_Project_Report.pdf](https://github.com/CSC3170-2022Fall/project-diana-candy-superteam/raw/main/CSC3170_Project_Report.pdf)
+
 ## 📍\*Optional Work
 
 ### 📘Notion Pamphlet (manual)
