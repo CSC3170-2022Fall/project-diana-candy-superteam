@@ -108,13 +108,15 @@ In addition to the features mentioned in the design idea, we also made optimizat
 3. `Column(String name, Table... tables)`: If the length of tables = 1, we are constructing a database table. Otherwise, we are constructing a super column. (robustness)
 4. `Colume._offset`: use offset in super columns to derive the data after cartesian product.
 
+## Presentation Video
+
+[![](https://user-images.githubusercontent.com/34508318/209759625-98b32ebc-4e96-4b59-8229-edd329dcf70e.png)](https://www.bilibili.com/video/BV1wD4y1j7jP)
+
 ## 📍\*Optional Work
 
 ### 📘Notion Pamphlet (manual)
 
-[![](https://user-images.githubusercontent.com/34508318/208715834-2e7e927f-c519-4191-a729-dc88dc10c12e.png)](https://magic-chair-572.notion.site/CSC3170-Project-Pamphlet-c0cbaadee8814760a55b3a1eef0328b3)
-
-More details: https://magic-chair-572.notion.site/CSC3170-Project-Pamphlet-c0cbaadee8814760a55b3a1eef0328b3
+https://magic-chair-572.notion.site/CSC3170-Project-Pamphlet-c0cbaadee8814760a55b3a1eef0328b3
 
 ### \[Option4\] CMU 15-445/645, Fall 2021: Database Systems
 
